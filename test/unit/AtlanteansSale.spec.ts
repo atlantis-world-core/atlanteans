@@ -5,14 +5,14 @@ import {
   BLOCK_ONE_MONTH,
   TimeFormat,
   TimeUtil,
-} from '../../../utils/time';
+} from '../../utils/time';
 import {
   Atlanteans,
   AtlanteansSale,
   AtlanteansSale__factory,
   Atlanteans__factory,
   ERC20Mock,
-} from '../../../typechained';
+} from '../../typechained';
 import {
   BytesLike,
   formatEther,
@@ -32,7 +32,7 @@ import {
   Wallet,
 } from 'ethers';
 import { expect } from 'chai';
-import { MerkleTreeUtil } from '../../../utils/merkle';
+import { MerkleTreeUtil } from '../../utils/merkle';
 import MerkleTree from 'merkletreejs';
 import { MockContract, smock } from '@defi-wonderland/smock';
 
@@ -176,7 +176,7 @@ describe('Spec: AtlanteansSale', () => {
       claimsEndTime: TimeFormat.fromBigNumber(
         claimsStartTime + BLOCK_ONE_MONTH * 3
       ),
-      selfRefundsStartTime: claimsStartTime,
+      // selfRefundsStartTime: claimsStartTime,
 
       // auction
       startPrice: parseEther('0.1420'),
@@ -189,7 +189,7 @@ describe('Spec: AtlanteansSale', () => {
         TimeFormat.fromBigNumber(BLOCK_ONE_HOUR * 1)
       ),
       // lastPrice: parseEther('2.5'),
-      mintlistPrice: parseEther('0.055'),
+      mintlistPrice: parseEther('0.05'),
 
       maxMintlistSupply: BigNumber.from(2008),
       maxDaSupply: BigNumber.from(3000),
@@ -503,7 +503,7 @@ describe('Spec: AtlanteansSale', () => {
 
   describe('> mintlistPrice', () => {
     it('should be 0.055 $ETH', async () => {
-      expect(parseEther('0.055')).to.be.eq(mintlistPrice);
+      expect(parseEther('0.05')).to.be.eq(mintlistPrice);
     });
   });
 
