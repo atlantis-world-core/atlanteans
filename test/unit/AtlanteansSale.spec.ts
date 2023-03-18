@@ -5,14 +5,14 @@ import {
   BLOCK_ONE_MONTH,
   TimeFormat,
   TimeUtil,
-} from '../../utils/time';
+} from '../../../utils/time';
 import {
   Atlanteans,
   AtlanteansSale,
   AtlanteansSale__factory,
   Atlanteans__factory,
   ERC20Mock,
-} from '../../typechained';
+} from '../../../typechained';
 import {
   BytesLike,
   formatEther,
@@ -32,7 +32,7 @@ import {
   Wallet,
 } from 'ethers';
 import { expect } from 'chai';
-import { MerkleTreeUtil } from '../../utils/merkle';
+import { MerkleTreeUtil } from '../../../utils/merkle';
 import MerkleTree from 'merkletreejs';
 import { MockContract, smock } from '@defi-wonderland/smock';
 
@@ -1042,7 +1042,7 @@ describe('Spec: AtlanteansSale', () => {
     });
   });
 
-  describe.only('> claimSummon', () => {
+  describe('> claimSummon', () => {
     let quantity: BigNumberish;
     let scrollsAmount: BigNumberish;
 
@@ -1391,7 +1391,7 @@ describe('Spec: AtlanteansSale', () => {
       });
 
       await user.sendTransaction({
-        value: parseEther('9999'),
+        value: parseEther('999'),
         to: mockAtlanteansSale.address,
         gasLimit: 1_000_000,
       });
@@ -1485,7 +1485,7 @@ describe('Spec: AtlanteansSale', () => {
       });
 
       await user.sendTransaction({
-        value: parseEther('9999.5'),
+        value: parseEther('999.5'),
         to: mockAtlanteansSale.address,
         gasLimit: 1_000_000,
       });
@@ -1536,7 +1536,7 @@ describe('Spec: AtlanteansSale', () => {
   describe('> issueRefunds', () => {
     it('should issue refunds to minters', async () => {
       // empty balances
-      const bal = parseEther('9998');
+      const bal = parseEther('998');
       const to = mockAtlanteansSale.address;
 
       await user.sendTransaction({
@@ -1635,7 +1635,7 @@ describe('Spec: AtlanteansSale', () => {
   describe('> refundAddress', () => {
     it('should refund to user that have refundOwed amount', async () => {
       // empty balances
-      const bal = parseEther('9998');
+      const bal = parseEther('998');
       const to = mockAtlanteansSale.address;
 
       await user.sendTransaction({
@@ -1731,7 +1731,7 @@ describe('Spec: AtlanteansSale', () => {
   describe('> withdrawAll', () => {
     it('should withdraw all $ETH and all $WETH to treasury', async () => {
       // setup
-      const bal = parseEther('9999');
+      const bal = parseEther('999');
       const to = mockAtlanteansSale.address;
       await user.sendTransaction({
         to,

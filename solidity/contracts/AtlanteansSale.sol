@@ -12,8 +12,8 @@ import {MerkleProofUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/
 import {ECDSAUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol';
 import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import {AddressUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol';
-import {IAtlanteans} from '../interfaces/IAtlanteans.sol';
-import {IWETH} from '../interfaces/IWETH.sol';
+import {IAtlanteans} from '../../interfaces/IAtlanteans.sol';
+import {IWETH} from '../../interfaces/IWETH.sol';
 
 /**
  * ▄▀█ ▀█▀ █░░ ▄▀█ █▄░█ ▀█▀ █ █▀   █░█░█ █▀█ █▀█ █░░ █▀▄
@@ -24,7 +24,7 @@ import {IWETH} from '../interfaces/IWETH.sol';
  * gaming and education in one lightweight virtual world that's accessible to everybody.
  *
  * @title AtlanteansSale
- * @author Carlo Miguel Dy
+ * @author Carlo Miguel Dy, Rachit Anand Srivastava
  * @dev Implements the Ducth Auction for Atlanteans Collection, code is exact same from Forgotten Runes.
  */
 contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
@@ -41,7 +41,6 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         uint256 publicEndTime;
         uint256 claimsStartTime;
         uint256 claimsEndTime;
-        uint256 selfRefundsStartTime;
         uint256 startPrice;
         uint256 lowestPrice;
         uint256 dropPerStep;
@@ -204,6 +203,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         require(daStarted(), 'AtlanteansSale: Auction not started');
         require(!claimsStarted(), 'AtlanteansSale: Auction phase over');
         require(
+            // slither-disable-next-line reentrancy-eth,reentrancy-benign
             numAtlanteans > 0 && numAtlanteans <= IAtlanteans(atlanteans).MAX_QUANTITY_PER_TX(),
             'AtlanteansSale: You can summon no more than 19 atlanteans at a time'
         );
@@ -223,6 +223,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
             numAtlanteans > 0 && numAtlanteans <= IAtlanteans(atlanteans).MAX_QUANTITY_PER_TX(),
             'AtlanteansSale: You can summon no more than 19 Atlanteans at a time'
         );
+        // slither-disable-next-line incorrect-equality
         require(amount == lastPrice * numAtlanteans, 'AtlanteansSale: Ether value sent is incorrect');
         _;
     }
@@ -346,6 +347,8 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         maxDaSupply = _initializerArgs.maxDaSupply;
         maxForSale = _initializerArgs.maxForSale;
         maxForClaim = _initializerArgs.maxForClaim;
+
+        selfRefundsStartTime = type(uint256).max;
     }
 
     /*
@@ -362,13 +365,9 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @notice Mint an Atlantean in the mintlist phase (paid)
      * @param _merkleProof bytes32[] your proof of being able to mint
      */
-    function mintlistSummon(bytes32[] calldata _merkleProof)
-        external
-        payable
-        nonReentrant
-        whenNotPaused
-        mintlistValidations(_merkleProof, msg.value)
-    {
+    function mintlistSummon(
+        bytes32[] calldata _merkleProof
+    ) external payable nonReentrant whenNotPaused mintlistValidations(_merkleProof, msg.value) {
         _sendPaymentAndRefund(mintlistPrice);
         _mintlistMint();
     }
@@ -378,13 +377,10 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param _merkleProof bytes32[] your proof of being able to mint
      * @param amount uint256 of the wrapped ether amount sent by caller
      */
-    function mintlistSummon(bytes32[] calldata _merkleProof, uint256 amount)
-        external
-        payable
-        nonReentrant
-        whenNotPaused
-        mintlistValidations(_merkleProof, amount)
-    {
+    function mintlistSummon(
+        bytes32[] calldata _merkleProof,
+        uint256 amount
+    ) external payable nonReentrant whenNotPaused mintlistValidations(_merkleProof, amount) {
         _sendWethPaymentAndRefund(mintlistPrice, amount);
         _mintlistMint();
     }
@@ -430,13 +426,10 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param numAtlanteans uint256 of the number of atlanteans you're trying to mint
      * @param amount uint256 of the wrapped ether amount sent by caller
      */
-    function publicSummon(uint256 numAtlanteans, uint256 amount)
-        external
-        payable
-        nonReentrant
-        whenNotPaused
-        publicValidations(numAtlanteans, amount)
-    {
+    function publicSummon(
+        uint256 numAtlanteans,
+        uint256 amount
+    ) external payable nonReentrant whenNotPaused publicValidations(numAtlanteans, amount) {
         _sendWethPaymentAndRefund(lastPrice * numAtlanteans, amount);
         _publicMint(numAtlanteans);
     }
@@ -447,11 +440,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param scrollsAmount uint256 can be fetched from server side
      * @param numAtlanteans uint256 the amount to be minted during claiming
      */
-    function claimSummon(
-        bytes calldata signature,
-        uint256 scrollsAmount,
-        uint256 numAtlanteans
-    ) external nonReentrant whenNotPaused {
+    function claimSummon(bytes calldata signature, uint256 scrollsAmount, uint256 numAtlanteans) external nonReentrant whenNotPaused {
         require(claimsStarted(), 'AtlanteansSale: Claim phase not started');
         require(numClaimed < maxForClaim, 'AtlanteansSale: No more claims');
 
@@ -491,6 +480,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
     }
 
     function _mint(address to, uint256 quantity) private {
+        // slither-disable-next-line reentrancy-eth,reentrancy-no-eth,reentrancy-benign,reentrancy-events
         IAtlanteans(atlanteans).mintTo(to, quantity);
         emit AtlanteanMint(to, quantity);
     }
@@ -512,13 +502,12 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param numAtlanteans uint256 The quantity of tokens to be minted
      */
     function _daMint(uint256 numAtlanteans) private {
+        _mint(msg.sender, numAtlanteans);
         daMinters.push(msg.sender);
         daAmountPaid[msg.sender] += msg.value;
         daNumMinted[msg.sender] += numAtlanteans;
         numSold += numAtlanteans;
         lastPrice = currentDaPrice();
-
-        _mint(msg.sender, numAtlanteans);
         emit BidSummon(msg.sender, numAtlanteans);
     }
 
@@ -549,6 +538,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         }
 
         uint256 elapsed = block.timestamp - daStartTime;
+        // slither-disable-next-line divide-before-multiply
         uint256 steps = elapsed / daDropInterval;
         uint256 stepDeduction = steps * dropPerStep;
 
@@ -767,11 +757,12 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function _sendPaymentAndRefund(uint256 price) private {
         uint256 refund = msg.value - price;
-
+        // @slither-disable-next-line reentrancy-eth,reentrancy-benign
         (bool paymentSent, bytes memory paymentData) = payable(address(this)).call{value: price}('');
         require(paymentSent, 'AtlanteansSale: Failed to send Ether to treasury.');
 
         if (refund > 0) {
+            // @slither-disable-next-line reentrancy-eth,reentrancy-benign
             (bool refundSent, bytes memory refundData) = payable(msg.sender).call{value: refund}('');
             require(refundSent, 'AtlanteansSale: Failed to send refund back to caller.');
         }
@@ -783,9 +774,11 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function _sendWethPaymentAndRefund(uint256 price, uint256 amount) private {
         uint256 refund = amount - price;
+        // slither-disable-next-line unchecked-transfer,reentrancy-events
         IWETH(weth).transferFrom(msg.sender, address(this), price);
 
         if (refund > 0) {
+            // slither-disable-next-line unchecked-transfer,reentrancy-events
             IWETH(weth).transferFrom(address(this), msg.sender, price);
         }
     }
@@ -800,6 +793,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param endIdx uint256 the ending index of daMinters, inclusive
      */
     function issueRefunds(uint256 startIdx, uint256 endIdx) public onlyOwner nonReentrant {
+        selfRefundsStartTime = block.timestamp + 24 hours;
         for (uint256 i = startIdx; i < endIdx + 1; i++) {
             _refundAddress(daMinters[i]);
         }
@@ -854,10 +848,10 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
     /**
      * @notice Withdraws all funds out to treasury
      */
-    function withdrawAll() external onlyOwner returns (bool) {
+    function withdrawAll() external onlyOwner returns (bool, bool) {
         (bool success, ) = payable(treasury).call{value: address(this).balance, gas: 30_000}(new bytes(0));
-        IWETH(weth).transfer(treasury, IWETH(weth).balanceOf(address(this)));
+        bool successERC20 = IWETH(weth).transfer(treasury, IWETH(weth).balanceOf(address(this)));
 
-        return success;
+        return (success, successERC20);
     }
 }

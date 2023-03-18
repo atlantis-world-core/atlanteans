@@ -96,11 +96,7 @@ contract Atlanteans is
     /**
      * @dev See {ERC2981Upgradeable-_setTokenRoyalty}.
      */
-    function setTokenRoyalty(
-        uint256 tokenId,
-        address receiver,
-        uint96 feeNumerator
-    ) external onlyAdmin {
+    function setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator) external onlyAdmin {
         _setTokenRoyalty(tokenId, receiver, feeNumerator);
     }
 
@@ -147,13 +143,9 @@ contract Atlanteans is
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(AccessControlUpgradeable, ERC721AUpgradeable, IERC721AUpgradeable, ERC2981Upgradeable)
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual override(AccessControlUpgradeable, ERC721AUpgradeable, IERC721AUpgradeable, ERC2981Upgradeable) returns (bool) {
         return
             interfaceId == type(IAccessControlUpgradeable).interfaceId ||
             interfaceId == type(IERC721AUpgradeable).interfaceId ||
