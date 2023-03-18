@@ -1,0 +1,136 @@
+{
+  "name": "hardhat-boilerplate",
+  "version": "0.0.0",
+  "description": "Hardhat boilerplate",
+  "keywords": [
+    "ethereum",
+    "smart",
+    "contracts",
+    "test",
+    "solidity",
+    "hardhat",
+    "boilerplate"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/defi-wonderland/solidity-hardhat-boilerplate.git"
+  },
+  "license": "AGPL-3.0-only",
+  "contributors": [
+    {
+      "name": "404skillz",
+      "url": "https://github.com/404skillz"
+    },
+    {
+      "name": "0xGorilla",
+      "url": "https://github.com/0xGorilla"
+    },
+    {
+      "name": "wei3erHase",
+      "url": "https://github.com/wei3erHase"
+    }
+  ],
+  "files": [
+    "solidity/contracts",
+    "solidity/interfaces",
+    "artifacts/solidity/**/*.json",
+    "!artifacts/solidity/**/**/*.dbg.json",
+    "typechained",
+    "deployments",
+    "!deployments/localhost",
+    "!.env",
+    "!**/.DS_Store"
+  ],
+  "scripts": {
+    "compile": "eth-sdk && hardhat compile",
+    "compile:test": "cross-env TEST=true hardhat compile",
+    "coverage": "hardhat coverage",
+    "deploy": "npx hardhat deploy",
+    "docs": "solidity-docgen --solc-module solc-0.8",
+    "fork:node": "cross-env FORK=true hardhat node",
+    "fork:script": "cross-env FORK=true hardhat run",
+    "postinstall": "husky install && yarn compile",
+    "lint:check": "cross-env solhint 'solidity/**/*.sol' && cross-env prettier --check './**.{sol,ts,js}'",
+    "lint:fix": "sort-package-json && cross-env prettier --write './**' && cross-env solhint --fix 'solidity/**/*.sol'",
+    "prepare": "husky install",
+    "prepublishOnly": "hardhat clean && hardhat compile && pinst --disable",
+    "postpublish": "pinst --enable",
+    "release": "standard-version",
+    "test": "yarn compile:test && cross-env TEST=true mocha",
+    "test:all": "yarn test './test/e2e/**/*.spec.ts' && yarn test 'test/unit/**/*.spec.ts'",
+    "test:e2e": "yarn test './test/e2e/**/*.spec.ts'",
+    "test:gas": "cross-env REPORT_GAS=1 npx hardhat test",
+    "test:unit": "yarn test 'test/unit/**/*.spec.ts'"
+  },
+  "lint-staged": {
+    "*.{js,css,md,ts,sol}": "prettier --write",
+    "*.sol": "cross-env solhint --fix 'solidity/**/*.sol'",
+    "package.json": "sort-package-json"
+  },
+  "resolutions": {
+    "cli-table3@^0.5.0/colors": "1.4.0",
+    "cli-table@^0.3.1/colors": "1.0.3",
+    "eth-gas-reporter/colors": "1.4.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "4.7.3",
+    "@openzeppelin/contracts-upgradeable": "^4.8.0-rc.1",
+    "erc721a-upgradeable": "^4.2.2",
+    "keccak256": "^1.0.6",
+    "merkletreejs": "^0.3.9"
+  },
+  "devDependencies": {
+    "@codechecks/client": "0.1.12",
+    "@commitlint/cli": "17.1.2",
+    "@commitlint/config-conventional": "17.1.0",
+    "@defi-wonderland/smock": "2.3.0",
+    "@dethcrypto/eth-sdk": "0.3.3",
+    "@dethcrypto/eth-sdk-client": "0.1.6",
+    "@ethersproject/abi": "5.7.0",
+    "@ethersproject/providers": "5.7.1",
+    "@faker-js/faker": "^7.6.0",
+    "@nomicfoundation/hardhat-chai-matchers": "1.0.3",
+    "@nomicfoundation/hardhat-network-helpers": "1.0.6",
+    "@nomicfoundation/hardhat-toolbox": "2.0.0",
+    "@nomiclabs/hardhat-ethers": "2.1.1",
+    "@nomiclabs/hardhat-etherscan": "3.1.0",
+    "@nomiclabs/hardhat-solhint": "^2.0.1",
+    "@openzeppelin/hardhat-upgrades": "^1.21.0",
+    "@typechain/ethers-v5": "10.1.0",
+    "@typechain/hardhat": "6.1.3",
+    "@types/chai": "4.3.3",
+    "@types/chai-as-promised": "7.1.5",
+    "@types/lodash": "4.14.185",
+    "@types/mocha": "9.1.1",
+    "@types/node": "18.7.21",
+    "chai": "4.3.6",
+    "chai-as-promised": "7.1.1",
+    "cross-env": "7.0.3",
+    "dotenv": "16.0.2",
+    "ethers": "5.7.1",
+    "hardhat": "2.11.2",
+    "hardhat-deploy": "0.11.15",
+    "hardhat-gas-reporter": "^1.0.9",
+    "hardhat-preprocessor": "0.1.5",
+    "husky": "8.0.1",
+    "lint-staged": "13.0.3",
+    "lodash": "4.17.21",
+    "mocha": "10.0.0",
+    "nft.storage": "^7.0.0",
+    "pinst": "3.0.0",
+    "prettier": "2.7.1",
+    "prettier-plugin-solidity": "1.0.0-beta.24",
+    "solc-0.8": "npm:solc@0.8.17",
+    "solhint": "3.3.7",
+    "solhint-plugin-prettier": "0.0.5",
+    "solhint-plugin-wonderland": "0.0.1",
+    "solidity-coverage": "0.8.2",
+    "solidity-docgen": "0.5.17",
+    "sort-package-json": "1.57.0",
+    "standard-version": "9.5.0",
+    "ts-node": "10.9.1",
+    "tsconfig-paths": "4.1.0",
+    "typechain": "8.1.0",
+    "typescript": "4.8.3"
+  }
+}

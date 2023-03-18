@@ -1,0 +1,52 @@
+{
+  "extends": "solhint:recommended",
+  "plugins": [
+    "prettier",
+    "wonderland"
+  ],
+  "rules": {
+    "prettier/prettier": "warn",
+    "wonderland/non-state-vars-leading-underscore": "warn",
+    "compiler-version": [
+      "error",
+      "^0.8.14"
+    ],
+    "constructor-syntax": "warn",
+    "quotes": [
+      "warn",
+      "single"
+    ],
+    "func-visibility": [
+      "warn",
+      {
+        "ignoreConstructors": true
+      }
+    ],
+    "not-rely-on-time": "off",
+    "private-vars-leading-underscore": [
+      "warn",
+      {
+        "strict": false
+      }
+    ],
+    "no-inline-assembly": "off",
+    "no-empty-blocks": "warn",
+    "avoid-suicide": "error",
+    "avoid-sha3": "warn",
+    "no-unused-vars": "error",
+    "reason-string": "off",
+    "const-name-snakecase": "error",
+    "contract-name-camelcase": "error",
+    "event-name-camelcase": "error",
+    "func-name-mixedcase": "error",
+    "func-param-name-mixedcase": "error",
+    "modifier-name-mixedcase": "error",
+    "var-name-mixedcase": "error",
+    "imports-on-top": "error",
+    "ordering": "warn",
+    "visibility-modifier-order": "error",
+    "avoid-throw": "error",
+    "reentrancy": "warn",
+    "state-visibility": "error"
+  }
+}
