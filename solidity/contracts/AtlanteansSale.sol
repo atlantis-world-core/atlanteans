@@ -12,8 +12,8 @@ import {MerkleProofUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/
 import {ECDSAUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.sol';
 import {IERC20Upgradeable} from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import {AddressUpgradeable} from '@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol';
-import {IAtlanteans} from '../../interfaces/IAtlanteans.sol';
-import {IWETH} from '../../interfaces/IWETH.sol';
+import {IAtlanteans} from '../interfaces/IAtlanteans.sol';
+import {IWETH} from '../interfaces/IWETH.sol';
 
 /**
  * ▄▀█ ▀█▀ █░░ ▄▀█ █▄░█ ▀█▀ █ █▀   █░█░█ █▀█ █▀█ █░░ █▀▄
