@@ -25,7 +25,7 @@ Atlanteans is an ERC721A token. It will be minted in four phases:
 1. Phase 1: **Allowlist sale** for mintlist merkletree, 1 per account at lowest DA price
 2. Phase 2: True, last-price, **Dutch auction** phase (refunds above lowest bid)
 3. Phase 3: **Public sale** for whatever is left at lowest DA price
-4. Phase 4: **Free claim** for claimslist merkletree, 1 per account for free
+4. Phase 4: **Free claim** for claimslist, 1 scroll = 1 atlantean per account for free (32 scrolls = 32 atlanteans)
 
 Details below.
 
