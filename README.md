@@ -26,10 +26,13 @@ Atlanteans! If you have any questions, please contact us!
 
 Atlanteans is an ERC721A token. It will be minted in four phases:
 
-Phase 1: Allowlist sale for mintlist merkletree, 2 per account at 0.05 ETH \n\n 
-Phase 2: True, last-price dutch auction phase (with refunds above lowest bid)\n\n 
-Phase 3: If any remain, there will be a public phase at dutch auction lastPrice \n\n 
-Phase 4: Free claim for Founding Atlanteans claimslist, 1 scroll = 1 atlantean \n\n 
+Phase 1: Allowlist sale for mintlist merkletree, 2 per account at 0.05 ETH 
+
+Phase 2: True, last-price dutch auction phase (with refunds above lowest bid)
+
+Phase 3: If any remain, there will be a public phase at dutch auction lastPrice  
+
+Phase 4: Free claim for Founding Atlanteans claimslist, 1 scroll = 1 atlantean 
 
 Details below.
 
