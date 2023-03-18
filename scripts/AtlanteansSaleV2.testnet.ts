@@ -65,7 +65,7 @@ async function main() {
     claimsEndTime: TimeFormat.fromBigNumber(
       claimsStartTime + BLOCK_ONE_MONTH * 3
     ),
-    selfRefundsStartTime: claimsStartTime,
+    // selfRefundsStartTime: claimsStartTime,
 
     // auction
     startPrice: parseEther('0.1420'),
