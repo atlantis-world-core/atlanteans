@@ -26,10 +26,10 @@ Atlanteans! If you have any questions, please contact us!
 
 Atlanteans is an ERC721A token. It will be minted in four phases:
 
-1. Phase 1: **Allowlist sale** for mintlist merkletree, 1 per account at lowest DA price
-2. Phase 2: True, last-price, **Dutch auction** phase (refunds above lowest bid)
-3. Phase 3: **Public sale** for whatever is left at lowest DA price
-4. Phase 4: **Free claim** for claimslist, 1 scroll = 1 atlantean per account for free (32 scrolls = 32 atlanteans)
+Phase 1: Allowlist sale for mintlist merkletree, 2 per account at 0.05 ETH
+Phase 2: True, last-price dutch auction phase (with refunds above lowest bid)
+Phase 3: If any remain, there will be a public phase at dutch auction lastPrice
+Phase 4: Free claim for Founding Atlanteans claimslist, 1 scroll = 1 atlantean
 
 Details below.
 
@@ -76,19 +76,19 @@ The third phase of the sale will be a public sale for all remaining Atlanteans t
 
 The third phase begins Friday March 24th at 10am PST.
 
-The price will be the price of the last Warrior sold during the Dutch auction.
+The price will be the price of the last Atlantean sold during the Dutch auction.
 
 Reveal will happen at the end of the Public Phase.
 
 #### Phase 4: Claimslist Phase
 
-After the Public Phase, accounts on the claimslist will be able to mint Atlanteans the same amount of Scrolls held on the snapshot taken on March 17 per account.
+After the Dutch Auction Phase, accounts on the claimslist will be able to mint Atlanteans the same amount of Scrolls held on the snapshot taken on March 17 per account.
 
 The claimlist phase lasts for 3 months.
 
 #### Supply Breakdown
 
-- **Total Supply: 16,000**
+- **Total Supply: 6789**
 
 Sales:
 
