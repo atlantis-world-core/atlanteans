@@ -121,7 +121,7 @@ Here's a timeline of when the various methods can be called:
     mintlistSummon  : |------------|
     bidSummon       :              |------------|
     publicSummon    :                           |------------|
-    claimSummon     :                                        |------------|-----------|
+    claimSummon     :                           |------------|-----------|------------|             
     teamSummon      : |---------------------------------------------------------------|
 
 ### Configuration
