@@ -60,7 +60,7 @@ The auction will begin on Thursday March 23rd at 10am PST.
 
 There will be approximately 2,540 Atlanteans available in this phase.
 
-The mint will start at 0.1420 ETH and drop by 0.0031 ETH every 10 minutes until it reaches 0.069 ETH.
+The mint will start at 0.1420 ETH and drop by 0.0031 ETH every 1 hour until it reaches 0.069 ETH.
 
 When this phase ends, refunds will be sent for whatever was paid above the final price.
 
