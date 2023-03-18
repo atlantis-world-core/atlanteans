@@ -18,6 +18,10 @@ Atlanteans! If you have any questions, please contact us!
 
 - **Twitter** : https://twitter.com/carlomigueldy
 
+#### Rachit
+
+- **Twitter** : https://twitter.com/RacSri25
+
 # Introduction
 
 Atlanteans is an ERC721A token. It will be minted in four phases:
