@@ -57,7 +57,7 @@ There will be approximately 2,000 Atlanteans available in this phase.
 
 Everyone on the mintlist will have 24 hours to mint two Atlanteans.
 
-The price of the Atlanteans will be 0.055 $ETH.
+The price of the Atlanteans will be 0.05 $ETH.
 
 #### Phase 2: Last-price Dutch Auction Phase
 
