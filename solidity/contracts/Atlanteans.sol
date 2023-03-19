@@ -9,8 +9,10 @@ import {ERC721AUpgradeable, IERC721AUpgradeable, ERC721AStorage} from 'erc721a-u
 import {ERC721AQueryableUpgradeable, IERC721AQueryableUpgradeable} from 'erc721a-upgradeable/contracts/extensions/ERC721AQueryableUpgradeable.sol';
 import {ERC721ABurnableUpgradeable, IERC721ABurnableUpgradeable} from 'erc721a-upgradeable/contracts/extensions/ERC721ABurnableUpgradeable.sol';
 import {AccessControlUpgradeable, IAccessControlUpgradeable} from '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
+import {OwnableUpgradeable} from '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import {PausableUpgradeable} from '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import {ERC2981Upgradeable, IERC2981Upgradeable} from '@openzeppelin/contracts-upgradeable/token/common/ERC2981Upgradeable.sol';
+import {DefaultOperatorFilterer} from 'operator-filter-registry/src/DefaultOperatorFilterer.sol';
 
 /**
  * ▄▀█ ▀█▀ █░░ ▄▀█ █▄░█ ▀█▀ █ █▀   █░█░█ █▀█ █▀█ █░░ █▀▄
@@ -30,8 +32,10 @@ contract Atlanteans is
     ERC721AQueryableUpgradeable,
     ERC721ABurnableUpgradeable,
     AccessControlUpgradeable,
+    OwnableUpgradeable,
     PausableUpgradeable,
-    ERC2981Upgradeable
+    ERC2981Upgradeable,
+    DefaultOperatorFilterer
 {
     /// @notice The minter role hash format
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
@@ -98,7 +102,11 @@ contract Atlanteans is
     /**
      * @dev See {ERC2981Upgradeable-_setTokenRoyalty}.
      */
-    function setTokenRoyalty(uint256 tokenId, address receiver, uint96 feeNumerator) external onlyAdmin {
+    function setTokenRoyalty(
+        uint256 tokenId,
+        address receiver,
+        uint96 feeNumerator
+    ) external onlyAdmin {
         _setTokenRoyalty(tokenId, receiver, feeNumerator);
     }
 
@@ -117,6 +125,7 @@ contract Atlanteans is
     function initialize(address _treasury, string calldata _defBaseURI) public initializerERC721A initializer {
         __ERC721A_init('Atlanteans', 'AWC');
         __AccessControl_init();
+        __Ownable_init();
         __Pausable_init();
         __ERC2981_init();
 
@@ -145,9 +154,13 @@ contract Atlanteans is
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public view virtual override(AccessControlUpgradeable, ERC721AUpgradeable, IERC721AUpgradeable, ERC2981Upgradeable) returns (bool) {
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(AccessControlUpgradeable, ERC721AUpgradeable, IERC721AUpgradeable, ERC2981Upgradeable)
+        returns (bool)
+    {
         return
             interfaceId == type(IAccessControlUpgradeable).interfaceId ||
             interfaceId == type(IERC721AUpgradeable).interfaceId ||
@@ -215,9 +228,12 @@ contract Atlanteans is
      *
      * Emits an {Approval} event.
      */
-    function approve(address to, uint256 id) public override(ERC721AUpgradeable, IERC721AUpgradeable) {
-        require(allowedMarketplaces[to], 'Invalid marketplace, not allowed');
-        super.approve(to, id);
+    function approve(address operator, uint256 tokenId)
+        public
+        override(ERC721AUpgradeable, IERC721AUpgradeable)
+        onlyAllowedOperatorApproval(operator)
+    {
+        super.approve(operator, tokenId);
     }
 
     /**
@@ -231,8 +247,11 @@ contract Atlanteans is
      *
      * Emits an {ApprovalForAll} event.
      */
-    function setApprovalForAll(address operator, bool approved) public override(ERC721AUpgradeable, IERC721AUpgradeable) {
-        require(allowedMarketplaces[operator], 'Invalid marketplace, not allowed');
+    function setApprovalForAll(address operator, bool approved)
+        public
+        override(ERC721AUpgradeable, IERC721AUpgradeable)
+        onlyAllowedOperatorApproval(operator)
+    {
         super.setApprovalForAll(operator, approved);
     }
 
@@ -243,5 +262,30 @@ contract Atlanteans is
      */
     function setAllowedMarketplace(address marketplace, bool allowed) public onlyAdmin {
         allowedMarketplaces[marketplace] = allowed;
+    }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override(ERC721AUpgradeable, IERC721AUpgradeable) onlyAllowedOperator(from) {
+        super.transferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override(ERC721AUpgradeable, IERC721AUpgradeable) onlyAllowedOperator(from) {
+        super.safeTransferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public override(ERC721AUpgradeable, IERC721AUpgradeable) onlyAllowedOperator(from) {
+        super.safeTransferFrom(from, to, tokenId, data);
     }
 }
