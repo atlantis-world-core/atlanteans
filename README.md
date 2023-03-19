@@ -26,13 +26,13 @@ Atlanteans! If you have any questions, please contact us!
 
 Atlanteans is an ERC721A token. It will be minted in four phases:
 
-Phase 1: Allowlist sale for mintlist merkletree, 2 per account at 0.05 ETH 
+Phase 1: Allowlist sale for mintlist merkletree, 2 per account at 0.05 ETH
 
 Phase 2: True, last-price dutch auction phase (with refunds above lowest bid)
 
-Phase 3: If any remain, there will be a public phase at dutch auction lastPrice  
+Phase 3: If any remain, there will be a public phase at dutch auction lastPrice
 
-Phase 4: Free claim for Founding Atlanteans claimslist, 1 scroll = 1 atlantean 
+Phase 4: Free claim for Founding Atlanteans claimslist, 1 scroll = 1 atlantean
 
 Details below.
 
@@ -124,7 +124,7 @@ Here's a timeline of when the various methods can be called:
     mintlistSummon  : |------------|
     bidSummon       :              |------------|
     publicSummon    :                           |------------|
-    claimSummon     :                           |------------|-----------|------------|             
+    claimSummon     :                           |------------|-----------|------------|
     teamSummon      : |---------------------------------------------------------------|
 
 ### Configuration
@@ -151,13 +151,10 @@ That said, we'll configure a self-refund timer as a sort of protection for minte
 
 # Areas of Concern
 
-- Withdrawing funds - is there any scenario where the team cannot withdraw funds?
-- Issuing refunds - is the logic correct? Can we save gas?
-- Self-refunds - is there any way someone can claim more than they're entitled to in a self-refund?
-- Phase supplies - is there a problem with the supply issuance in any phase?
-- DA Price calculations - is the pricing accurate within the phases of the DA?
+- mintlistSummon, bidSummon, publicSummon - These three functions have the other version that accepts WETH as payment method, is this already the ideal implementation or is there a much better implementation?
+- claimSummon - We have a product requirement that, 1 Scroll NFT (Polygon Mainnet) = 1 Atlantean NFT (Mainnet) so will need to ensure that an account can claim not more than how much scrolls they hold. Is the implementation handled well in terms of security? Is there any chance any user could exploit this?
 
-Here is the basis for these smart contracts: https://github.com/code-423n4/2022-05-runes, that were audited: https://code4rena.com/reports/2022-05-runes/ 
+Here is the basis for these smart contracts: https://github.com/code-423n4/2022-05-runes, that were audited: https://code4rena.com/reports/2022-05-runes/
 
 # Development & Testing
 
