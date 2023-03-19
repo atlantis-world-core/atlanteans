@@ -154,7 +154,7 @@ That said, we'll configure a self-refund timer as a sort of protection for minte
 - mintlistSummon, bidSummon, publicSummon - These three functions have the other version that accepts WETH as payment method, is this already the ideal implementation or is there a much better implementation?
 - claimSummon - We have a product requirement that, 1 Scroll NFT (Polygon Mainnet) = 1 Atlantean NFT (Mainnet) so will need to ensure that an account can claim not more than how much scrolls they hold. Is the implementation handled well in terms of security? Is there any chance any user could exploit this?
 
-Here is the basis for these smart contracts: https://github.com/code-423n4/2022-05-runes, that were audited: https://code4rena.com/reports/2022-05-runes/
+Here is the basis for these smart contracts: https://github.com/code-423n4/2022-05-runes, some other concerns were addressed in this audit: https://code4rena.com/reports/2022-05-runes/
 
 # Development & Testing
 
