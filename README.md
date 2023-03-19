@@ -157,8 +157,7 @@ That said, we'll configure a self-refund timer as a sort of protection for minte
 - Phase supplies - is there a problem with the supply issuance in any phase?
 - DA Price calculations - is the pricing accurate within the phases of the DA?
 
-// Here is the basis for these smart contracts: https://github.com/code-423n4/2022-05-runes
-& audit: https://code4rena.com/reports/2022-05-runes/ 
+Here is the basis for these smart contracts: https://github.com/code-423n4/2022-05-runes, that were audited: https://code4rena.com/reports/2022-05-runes/ 
 
 # Development & Testing
 
