@@ -26,13 +26,15 @@
     "@eth-optimism/=node_modules/@eth-optimism/",
     "erc721a-upgradeable/=node_modules/erc721a-upgradeable/",
     "hardhat/=node_modules/hardhat/",
-    "erc1155diamondstorage/=node_modules/erc1155diamondstorage/"
+    "erc1155diamondstorage/=node_modules/erc1155diamondstorage/",
+    "operator-filter-registry/=node_modules/operator-filter-registry/"
   ],
   "solidity.remappings": [
     "@openzeppelin/=node_modules/@openzeppelin/",
     "@eth-optimism/=node_modules/@eth-optimism/",
     "erc721a-upgradeable/=node_modules/erc721a-upgradeable/",
     "hardhat/=node_modules/hardhat/",
-    "erc1155diamondstorage/=node_modules/erc1155diamondstorage/"
+    "erc1155diamondstorage/=node_modules/erc1155diamondstorage/",
+    "operator-filter-registry/=node_modules/operator-filter-registry/"
   ],
 }
