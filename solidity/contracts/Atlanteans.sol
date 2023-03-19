@@ -48,6 +48,8 @@ contract Atlanteans is
     /// @notice The URI for the token metadata
     string public baseURI;
 
+    mapping(address => bool) public allowedMarketplaces;
+
     event CharactersRevealed(string indexed uri);
 
     /**
@@ -197,5 +199,49 @@ contract Atlanteans is
      */
     function _baseURI() internal view virtual override returns (string memory) {
         return baseURI;
+    }
+
+    /**
+     * @dev Gives permission to `to` to transfer `tokenId` token to another account.
+     * The approval is cleared when the token is transferred.
+     *
+     * Only a single account can be approved at a time, so approving the
+     * zero address clears previous approvals.
+     *
+     * Requirements:
+     *
+     * - The caller must own the token or be an approved operator.
+     * - `tokenId` must exist.
+     *
+     * Emits an {Approval} event.
+     */
+    function approve(address to, uint256 id) public override(ERC721AUpgradeable, IERC721AUpgradeable) {
+        require(allowedMarketplaces[to], 'Invalid marketplace, not allowed');
+        super.approve(to, id);
+    }
+
+    /**
+     * @dev Approve or remove `operator` as an operator for the caller.
+     * Operators can call {transferFrom} or {safeTransferFrom}
+     * for any token owned by the caller.
+     *
+     * Requirements:
+     *
+     * - The `operator` cannot be the caller.
+     *
+     * Emits an {ApprovalForAll} event.
+     */
+    function setApprovalForAll(address operator, bool approved) public override(ERC721AUpgradeable, IERC721AUpgradeable) {
+        require(allowedMarketplaces[operator], 'Invalid marketplace, not allowed');
+        super.setApprovalForAll(operator, approved);
+    }
+
+    /**
+     * @notice Update marketplace list
+     * @param marketplace The address of marketplace to be whitelisted
+     * @param allowed Whether market place is allowed or not
+     */
+    function setAllowedMarketplace(address marketplace, bool allowed) public onlyAdmin {
+        allowedMarketplaces[marketplace] = allowed;
     }
 }
