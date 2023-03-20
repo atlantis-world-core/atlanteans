@@ -78,7 +78,7 @@ async function main() {
       TimeFormat.fromBigNumber(BLOCK_ONE_HOUR * 1)
     ),
     // finalPrice: parseEther('2.5'),
-    mintlistPrice: parseEther('0.055'),
+    mintlistPrice: parseEther('0.05'),
 
     maxMintlistSupply: BigNumber.from(1999),
     maxDaSupply: BigNumber.from(2540),
