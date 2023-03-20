@@ -835,6 +835,25 @@ describe('Spec: AtlanteansSale', () => {
       );
     });
 
+    it('should mint when given exact $ETH lastPrice', async () => {
+      // setup
+      numAtlanteans = '3';
+      lastPrice = parseEther('0.09');
+      await mockAtlanteansSale.setVariable('lastPrice', lastPrice);
+
+      // action & assert
+      await expect(
+        mockAtlanteansSale
+          .connect(user)
+          ['publicSummon(uint256)'](numAtlanteans, {
+            value: lastPrice.mul(numAtlanteans),
+          })
+      ).to.be.not.reverted;
+      expect(await mockAtlanteans.balanceOf(user.address)).to.be.eq(
+        numAtlanteans
+      );
+    });
+
     it('should mint when given exact $WETH', async () => {
       // setup
       numAtlanteans = '3';
@@ -1783,6 +1802,25 @@ describe('Spec: AtlanteansSale', () => {
         parseEther('0')
       );
       expect(await weth.balanceOf(treasury.address)).to.be.eq(bal);
+    });
+  });
+
+  describe('> playground', () => {
+    it('should calculate remaining for sale', async () => {
+      let [numSold, maxForSale] = await Promise.all([
+        mockAtlanteansSale.numSold(),
+        mockAtlanteansSale.maxForSale(),
+      ]);
+      console.log({ numSold, maxForSale });
+
+      await mockAtlanteansSale.setVariable('numSold', maxForSale.sub(50));
+
+      [numSold, maxForSale] = await Promise.all([
+        mockAtlanteansSale.numSold(),
+        mockAtlanteansSale.maxForSale(),
+      ]);
+      console.log({ numSold, maxForSale });
+      console.log('maxForSale.sub(numSold)', maxForSale.sub(numSold));
     });
   });
 });
