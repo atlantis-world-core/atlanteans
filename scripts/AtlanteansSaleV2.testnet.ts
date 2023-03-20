@@ -108,6 +108,8 @@ async function main() {
       '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
       '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65',
+      '0x69dc230b06a15796e3f42baf706e0e55d4d5eaa1', // rev
+      '0x9E569855F7CF13E9418Db5F0dE0D82DBB99a79Af', // cj
     ])
   );
   const mintlistMerkleRoot =
