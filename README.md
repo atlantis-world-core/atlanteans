@@ -143,7 +143,7 @@ However, they are configurable because if the site goes down (e.g. DDOS) we want
 
 ## Dutch Auction Refunds
 
-The plan is for the _owner_ to call `issueRefunds` after Phase 2 or Phase 3. We realize this will cost 10-20 ETH, but it feels safer than allowing self-refunds.
+The plan is for the _owner_ to call `issueRefunds` after Phase 2 or Phase 3. We realize this will be expensive gas cost, but it feels safer than allowing self-refunds & we don't have a front end for that.
 
 Currently the owner has the ability to withdraw all funds at any time. This should not break anything regarding the mint, but it presents a centralization risk to the minters in the case a refund is owed them.
 
