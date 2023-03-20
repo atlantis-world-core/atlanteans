@@ -191,10 +191,10 @@ describe('Spec: AtlanteansSale', () => {
       // lastPrice: parseEther('2.5'),
       mintlistPrice: parseEther('0.05'),
 
-      maxMintlistSupply: BigNumber.from(2008),
-      maxDaSupply: BigNumber.from(3000),
-      maxForSale: BigNumber.from(5008),
-      maxForClaim: BigNumber.from(1781),
+      maxMintlistSupply: BigNumber.from(1999),
+      maxDaSupply: BigNumber.from(2540),
+      maxForSale: BigNumber.from(1999).add(BigNumber.from(2540)),
+      maxForClaim: BigNumber.from(1442),
     };
     atlanteansSale = <AtlanteansSale>(
       await upgrades.deployProxy(factory, [saleInitArgs])
@@ -569,7 +569,7 @@ describe('Spec: AtlanteansSale', () => {
       const daRemainingSupply = await atlanteansSale.daRemainingSupply();
       console.log('daRemainingSupply', daRemainingSupply);
 
-      expect('3000').to.be.eq(daRemainingSupply);
+      expect('2540').to.be.eq(daRemainingSupply);
     });
 
     it('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
@@ -578,7 +578,7 @@ describe('Spec: AtlanteansSale', () => {
       const daRemainingSupply = await atlanteansSale.daRemainingSupply();
       console.log('daRemainingSupply', daRemainingSupply);
 
-      expect('5008').to.be.eq(daRemainingSupply);
+      expect('4539').to.be.eq(daRemainingSupply);
     });
 
     it('should get mock', async () => {
@@ -586,7 +586,7 @@ describe('Spec: AtlanteansSale', () => {
 
       await evmIncreaseTime(BLOCK_ONE_DAY * 2);
 
-      await mockAtlanteansSale.setVariable('numSold', '5007');
+      await mockAtlanteansSale.setVariable('numSold', '4538');
 
       const [daRemainingSupply, numSold] = await Promise.all([
         mockAtlanteansSale.daRemainingSupply(),
@@ -778,7 +778,7 @@ describe('Spec: AtlanteansSale', () => {
       numAtlanteans = '3';
       currentDaPrice = await mockAtlanteansSale.currentDaPrice();
 
-      await mockAtlanteansSale.setVariable('numSold', '5006');
+      await mockAtlanteansSale.setVariable('numSold', '4538');
       await expect(
         mockAtlanteansSale.connect(user)['bidSummon(uint256)'](numAtlanteans, {
           value: parseEther(formatEther(currentDaPrice)).mul(numAtlanteans),
@@ -931,6 +931,33 @@ describe('Spec: AtlanteansSale', () => {
           })
       ).to.be.revertedWith('AtlanteansSale: Public sale has ended');
       expect(await mockAtlanteans.balanceOf(user.address)).to.be.eq('0');
+    });
+
+    it('should mint when there is a left over supply from mintlist', async () => {
+      // setup
+      let [maxMintlistSupply] = await Promise.all([
+        mockAtlanteansSale.maxMintlistSupply(),
+      ]);
+      await mockAtlanteansSale.setVariable(
+        'numMintlistSold',
+        maxMintlistSupply.sub(1)
+      );
+      await mockAtlanteansSale.setVariable(
+        'numSold',
+        BigNumber.from(2540).add(maxMintlistSupply.sub(1))
+      );
+      await mockAtlanteansSale.setVariable('lastPrice', parseEther('0.069'));
+
+      await expect(
+        mockAtlanteansSale.connect(user)['publicSummon(uint256)']('1', {
+          value: parseEther('0.069'),
+        })
+      ).to.be.not.reverted;
+      await expect(
+        mockAtlanteansSale.connect(user)['publicSummon(uint256)']('1', {
+          value: parseEther('0.069'),
+        })
+      ).to.be.revertedWith('AtlanteansSale: Sold out');
     });
   });
 
