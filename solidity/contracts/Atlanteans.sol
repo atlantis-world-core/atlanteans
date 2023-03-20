@@ -12,7 +12,7 @@ import {AccessControlUpgradeable, IAccessControlUpgradeable} from '@openzeppelin
 import {OwnableUpgradeable} from '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import {PausableUpgradeable} from '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import {ERC2981Upgradeable, IERC2981Upgradeable} from '@openzeppelin/contracts-upgradeable/token/common/ERC2981Upgradeable.sol';
-import {DefaultOperatorFilterer} from 'operator-filter-registry/src/DefaultOperatorFilterer.sol';
+import {DefaultOperatorFiltererUpgradeable} from 'operator-filter-registry/src/upgradeable/DefaultOperatorFiltererUpgradeable.sol';
 
 /**
  * ▄▀█ ▀█▀ █░░ ▄▀█ █▄░█ ▀█▀ █ █▀   █░█░█ █▀█ █▀█ █░░ █▀▄
@@ -35,7 +35,7 @@ contract Atlanteans is
     OwnableUpgradeable,
     PausableUpgradeable,
     ERC2981Upgradeable,
-    DefaultOperatorFilterer
+    DefaultOperatorFiltererUpgradeable
 {
     /// @notice The minter role hash format
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
