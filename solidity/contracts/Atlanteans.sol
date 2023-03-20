@@ -41,7 +41,7 @@ contract Atlanteans is
     bytes32 public constant MINTER_ROLE = keccak256('MINTER_ROLE');
 
     /// @notice The maximum supply for this collection
-    uint256 public constant MAX_SUPPLY = 6_789;
+    uint256 public constant MAX_SUPPLY = 6_450;
 
     /// @notice The maximum allowed quantity for minting per tx
     uint256 public constant MAX_QUANTITY_PER_TX = 19;
