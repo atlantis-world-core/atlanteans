@@ -7,6 +7,7 @@ import { MerkleTreeUtil } from '../utils/merkle';
 import {
   BLOCK_ONE_DAY,
   BLOCK_ONE_HOUR,
+  BLOCK_ONE_MINUTE,
   BLOCK_ONE_MONTH,
   TimeFormat,
   TimeUtil,
@@ -48,8 +49,8 @@ async function main() {
   const atlanteansSaleFactory = await ethers.getContractFactory(
     'AtlanteansSale'
   );
-  const claimsStartTime = now + BLOCK_ONE_DAY * 4;
-  const publicStartTime = now + BLOCK_ONE_DAY * 3;
+  // const claimsStartTime = now + BLOCK_ONE_DAY * 4;
+  // const publicStartTime = now + BLOCK_ONE_DAY * 3;
   const saleInitArgs: AtlanteansSale.InitializerArgsStruct = {
     atlanteans: atlanteans.address, // atlanteans
     treasury: treasury.address,
@@ -57,14 +58,12 @@ async function main() {
     server: getAddress('0x284677dB45770dEAf0c947538b5d02F8270c70BC'),
 
     // phases
-    mintlistStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_DAY), // _mintlistStartTime
-    daStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_DAY * 2), // _daStartTime
-    publicStartTime: TimeFormat.fromBigNumber(publicStartTime),
-    publicEndTime: TimeFormat.fromBigNumber(publicStartTime + BLOCK_ONE_DAY),
-    claimsStartTime: TimeFormat.fromBigNumber(claimsStartTime),
-    claimsEndTime: TimeFormat.fromBigNumber(
-      claimsStartTime + BLOCK_ONE_MONTH * 3
-    ),
+    mintlistStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 5), // _mintlistStartTime
+    daStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 15), // _daStartTime
+    publicStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 50),
+    publicEndTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 60),
+    claimsStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 50),
+    claimsEndTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 60),
     // selfRefundsStartTime: claimsStartTime,
 
     // auction
@@ -72,18 +71,24 @@ async function main() {
     lowestPrice: parseEther('0.069'),
     dropPerStep: parseEther('0.0031'),
     daPriceCurveLength: BigNumber.from(
-      TimeFormat.fromBigNumber(BLOCK_ONE_DAY) // 24 hrs
+      TimeFormat.fromBigNumber(BLOCK_ONE_MINUTE * 24) // 24 minutes
+      // TimeFormat.fromBigNumber(BLOCK_ONE_DAY) // 24 hrs
     ),
     daDropInterval: BigNumber.from(
-      TimeFormat.fromBigNumber(BLOCK_ONE_HOUR * 1)
+      TimeFormat.fromBigNumber(BLOCK_ONE_MINUTE)
+      // TimeFormat.fromBigNumber(BLOCK_ONE_HOUR * 1)
     ),
     // finalPrice: parseEther('2.5'),
     mintlistPrice: parseEther('0.05'),
 
-    maxMintlistSupply: BigNumber.from(1999),
-    maxDaSupply: BigNumber.from(2540),
-    maxForSale: BigNumber.from(4539),
-    maxForClaim: BigNumber.from(1781),
+    maxMintlistSupply: BigNumber.from(2),
+    // maxMintlistSupply: BigNumber.from(1999),
+    maxDaSupply: BigNumber.from(30),
+    // maxDaSupply: BigNumber.from(2540),
+    maxForSale: BigNumber.from(32),
+    // maxForSale: BigNumber.from(4539),
+    maxForClaim: BigNumber.from(2),
+    // maxForClaim: BigNumber.from(1781),
   };
   const atlanteansSale = <AtlanteansSale>(
     await upgrades.deployProxy(atlanteansSaleFactory, [saleInitArgs])
