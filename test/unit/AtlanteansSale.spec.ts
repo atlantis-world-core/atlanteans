@@ -993,31 +993,51 @@ describe('Spec: AtlanteansSale', () => {
     });
 
     it('should mint when given valid merkle proof and valid $ETH', async () => {
+      numAtlanteans = '2';
+      mintlistPrice = await atlanteansSale.mintlistPrice();
+
       await expect(
         atlanteansSale
           .connect(user)
-          ['mintlistSummon(bytes32[])'](userMerkleProof, {
-            value: mintlistPrice,
-          })
+          ['mintlistSummon(bytes32[],uint256)'](
+            userMerkleProof,
+            numAtlanteans,
+            {
+              value: mintlistPrice.mul(numAtlanteans),
+            }
+          )
       ).to.be.not.reverted;
-      expect(await atlanteans.balanceOf(user.address)).to.be.eq('1');
-      expect(await getTreasuryBalance(atlanteansSale)).to.be.eq(mintlistPrice);
+      expect(await atlanteans.balanceOf(user.address)).to.be.eq(numAtlanteans);
+      expect(await getTreasuryBalance(atlanteansSale)).to.be.eq(
+        mintlistPrice.mul(numAtlanteans)
+      );
     });
 
     it('should mint when given valid merkle proof and valid wrapped $ETH', async () => {
+      numAtlanteans = '2';
+      mintlistPrice = await atlanteansSale.mintlistPrice();
+
       tx = await weth
         .connect(user)
-        .approve(atlanteansSale.address, mintlistPrice);
+        .mintTo(user.address, mintlistPrice.mul(numAtlanteans).mul(5));
+      rc = await tx.wait();
+      tx = await weth
+        .connect(user)
+        .approve(atlanteansSale.address, mintlistPrice.mul(numAtlanteans));
       rc = await tx.wait();
 
       tx = await atlanteansSale
         .connect(user)
-        ['mintlistSummon(bytes32[],uint256)'](userMerkleProof, mintlistPrice);
+        ['mintlistSummon(bytes32[],uint256,uint256)'](
+          userMerkleProof,
+          numAtlanteans,
+          mintlistPrice.mul(numAtlanteans)
+        );
       await tx.wait();
 
-      expect(await atlanteans.balanceOf(user.address)).to.be.eq('1');
+      expect(await atlanteans.balanceOf(user.address)).to.be.eq(numAtlanteans);
       expect(await weth.balanceOf(atlanteansSale.address)).to.be.eq(
-        mintlistPrice
+        mintlistPrice.mul(numAtlanteans)
       );
     });
 
@@ -1029,9 +1049,13 @@ describe('Spec: AtlanteansSale', () => {
       await expect(
         mockAtlanteansSale
           .connect(user)
-          ['mintlistSummon(bytes32[])'](userMerkleProof, {
-            value: mintlistPrice,
-          })
+          ['mintlistSummon(bytes32[],uint256)'](
+            userMerkleProof,
+            numAtlanteans,
+            {
+              value: mintlistPrice.mul(numAtlanteans),
+            }
+          )
       ).to.be.revertedWith('AtlanteansSale: Already minted twice');
       expect(await atlanteans.balanceOf(user.address)).to.be.eq('0');
       expect(await getTreasuryBalance(atlanteansSale)).to.be.eq('0');
@@ -1043,9 +1067,13 @@ describe('Spec: AtlanteansSale', () => {
       await expect(
         mockAtlanteansSale
           .connect(user)
-          ['mintlistSummon(bytes32[])'](userMerkleProof, {
-            value: mintlistPrice,
-          })
+          ['mintlistSummon(bytes32[],uint256)'](
+            userMerkleProof,
+            numAtlanteans,
+            {
+              value: mintlistPrice.mul(numAtlanteans),
+            }
+          )
       ).to.be.revertedWith('AtlanteansSale: Sold out');
       expect(await atlanteans.balanceOf(user.address)).to.be.eq('0');
       expect(await getTreasuryBalance(atlanteansSale)).to.be.eq('0');
@@ -1057,9 +1085,13 @@ describe('Spec: AtlanteansSale', () => {
       await expect(
         atlanteansSale
           .connect(user)
-          ['mintlistSummon(bytes32[])'](userMerkleProof, {
-            value: mintlistPrice,
-          })
+          ['mintlistSummon(bytes32[],uint256)'](
+            userMerkleProof,
+            numAtlanteans,
+            {
+              value: mintlistPrice.mul(numAtlanteans),
+            }
+          )
       ).to.be.revertedWith('AtlanteansSale: Mintlist phase not started');
       expect(await atlanteans.balanceOf(user.address)).to.be.eq('0');
       expect(await getTreasuryBalance(atlanteansSale)).to.be.eq('0');
@@ -1069,19 +1101,26 @@ describe('Spec: AtlanteansSale', () => {
       await expect(
         atlanteansSale
           .connect(user)
-          ['mintlistSummon(bytes32[])'](userMerkleProof, {
-            value: parseEther(formatEther(mintlistPrice)).div(2),
-          })
+          ['mintlistSummon(bytes32[],uint256)'](
+            userMerkleProof,
+            numAtlanteans,
+            {
+              value: parseEther(formatEther(mintlistPrice)).div(2),
+            }
+          )
       ).to.be.revertedWith('AtlanteansSale: Ether value incorrect');
       expect(await atlanteans.balanceOf(user.address)).to.be.eq('0');
       expect(await getTreasuryBalance(atlanteansSale)).to.be.eq('0');
     });
 
     it('should revert when the merkle proof is invalid', async () => {
+      numAtlanteans = '2';
       await expect(
-        atlanteansSale.connect(user)['mintlistSummon(bytes32[])']([], {
-          value: mintlistPrice,
-        })
+        atlanteansSale
+          .connect(user)
+          ['mintlistSummon(bytes32[],uint256)']([], numAtlanteans, {
+            value: mintlistPrice.mul(numAtlanteans),
+          })
       ).to.be.revertedWith('AtlanteansSale: Invalid proof');
       expect(await atlanteans.balanceOf(user.address)).to.be.eq('0');
       expect(await getTreasuryBalance(atlanteansSale)).to.be.eq('0');
@@ -1821,6 +1860,27 @@ describe('Spec: AtlanteansSale', () => {
       ]);
       console.log({ numSold, maxForSale });
       console.log('maxForSale.sub(numSold)', maxForSale.sub(numSold));
+    });
+
+    it('should get merkle root', async () => {
+      const mintlistMerkleTree = MerkleTreeUtil.createMerkleTree(
+        MerkleTreeUtil.sanitizeLeaves([
+          '0x284677dB45770dEAf0c947538b5d02F8270c70BC', // matches deployer.address
+          '0xb1d7dad6baef98df97bd2d3fb7540c08886e0299', // max
+          '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+          '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+          '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+          '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
+          '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65',
+          '0x69dc230b06a15796e3f42baf706e0e55d4d5eaa1', // rev
+          '0x9E569855F7CF13E9418Db5F0dE0D82DBB99a79Af', // cj
+          '0xf8dc099064d9DaB079243B9F73bC77390e708b8a', // mike
+          '0x9fF26d7e160A52064b328E38793e3569acbcaE99', // elisa
+        ])
+      );
+      const mintlistMerkleRoot =
+        MerkleTreeUtil.createMerkleRoot(mintlistMerkleTree);
+      console.log('mintlistMerkleRoot', mintlistMerkleRoot);
     });
   });
 });

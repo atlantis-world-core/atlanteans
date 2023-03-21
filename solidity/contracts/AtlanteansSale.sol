@@ -175,7 +175,11 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
     /**
      * @notice Common modifier for 2 functions mintlistSummon but with different arguments
      */
-    modifier mintlistValidations(bytes32[] calldata _merkleProof, uint256 amount) {
+    modifier mintlistValidations(
+        bytes32[] calldata _merkleProof,
+        uint256 numAtlanteans,
+        uint256 amount
+    ) {
         require(msg.sender == tx.origin && !AddressUpgradeable.isContract(msg.sender), 'AtlanteansSale: Not EOA');
 
         bytes32 node = keccak256(abi.encodePacked(msg.sender));
@@ -188,8 +192,9 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         require(numSold < maxForSale, 'AtlanteansSale: Sold out');
         require(numMintlistSold < maxMintlistSupply, 'AtlanteansSale: Sold out for mintlist phase');
         require(mintlistStarted(), 'AtlanteansSale: Mintlist phase not started');
-        require(amount == mintlistPrice, 'AtlanteansSale: Ether value incorrect');
+        require(amount == mintlistPrice * numAtlanteans, 'AtlanteansSale: Ether value incorrect');
         require(mintlistMinted[msg.sender] < 2, 'AtlanteansSale: Already minted twice');
+        require(numAtlanteans < 3, 'AtlanteansSale: Can only request max of 2');
         _;
     }
 
@@ -365,11 +370,15 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @notice Mint an Atlantean in the mintlist phase (paid)
      * @param _merkleProof bytes32[] your proof of being able to mint
      */
-    function mintlistSummon(
-        bytes32[] calldata _merkleProof
-    ) external payable nonReentrant whenNotPaused mintlistValidations(_merkleProof, msg.value) {
-        _sendPaymentAndRefund(mintlistPrice);
-        _mintlistMint();
+    function mintlistSummon(bytes32[] calldata _merkleProof, uint256 numAtlanteans)
+        external
+        payable
+        nonReentrant
+        whenNotPaused
+        mintlistValidations(_merkleProof, numAtlanteans, msg.value)
+    {
+        _sendPaymentAndRefund(mintlistPrice * numAtlanteans);
+        _mintlistMint(numAtlanteans);
     }
 
     /**
@@ -379,10 +388,11 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function mintlistSummon(
         bytes32[] calldata _merkleProof,
+        uint256 numAtlanteans,
         uint256 amount
-    ) external payable nonReentrant whenNotPaused mintlistValidations(_merkleProof, amount) {
-        _sendWethPaymentAndRefund(mintlistPrice, amount);
-        _mintlistMint();
+    ) external payable nonReentrant whenNotPaused mintlistValidations(_merkleProof, numAtlanteans, amount) {
+        _sendWethPaymentAndRefund(mintlistPrice * numAtlanteans, amount);
+        _mintlistMint(numAtlanteans);
     }
 
     /**
@@ -426,10 +436,13 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param numAtlanteans uint256 of the number of atlanteans you're trying to mint
      * @param amount uint256 of the wrapped ether amount sent by caller
      */
-    function publicSummon(
-        uint256 numAtlanteans,
-        uint256 amount
-    ) external payable nonReentrant whenNotPaused publicValidations(numAtlanteans, amount) {
+    function publicSummon(uint256 numAtlanteans, uint256 amount)
+        external
+        payable
+        nonReentrant
+        whenNotPaused
+        publicValidations(numAtlanteans, amount)
+    {
         _sendWethPaymentAndRefund(lastPrice * numAtlanteans, amount);
         _publicMint(numAtlanteans);
     }
@@ -440,7 +453,11 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param scrollsAmount uint256 can be fetched from server side
      * @param numAtlanteans uint256 the amount to be minted during claiming
      */
-    function claimSummon(bytes calldata signature, uint256 scrollsAmount, uint256 numAtlanteans) external nonReentrant whenNotPaused {
+    function claimSummon(
+        bytes calldata signature,
+        uint256 scrollsAmount,
+        uint256 numAtlanteans
+    ) external nonReentrant whenNotPaused {
         require(claimsStarted(), 'AtlanteansSale: Claim phase not started');
         require(numClaimed < maxForClaim, 'AtlanteansSale: No more claims');
 
@@ -488,12 +505,12 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
     /**
      * @notice Minting relevant for mintlist phase
      */
-    function _mintlistMint() private {
+    function _mintlistMint(uint256 numAtlanteans) private {
         mintlistMinted[msg.sender]++;
-        numMintlistSold += 1;
-        numSold += 1;
+        numMintlistSold += numAtlanteans;
+        numSold += numAtlanteans;
 
-        _mint(msg.sender, 1);
+        _mint(msg.sender, numAtlanteans);
         emit MintlistSummon(msg.sender);
     }
 
