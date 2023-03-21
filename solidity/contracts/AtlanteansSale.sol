@@ -506,7 +506,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @notice Minting relevant for mintlist phase
      */
     function _mintlistMint(uint256 numAtlanteans) private {
-        mintlistMinted[msg.sender]++;
+        mintlistMinted[msg.sender] += numAtlanteans;
         numMintlistSold += numAtlanteans;
         numSold += numAtlanteans;
 
