@@ -698,12 +698,16 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @notice A convenient way to set all phase times at once
      * @param newDaStartTime uint256 the dutch auction start time
      * @param newMintlistStartTime uint256 the mintlst phase start time
+     * @param newPublicStartTime uint256 the public phase start time
+     * @param newPublicEndTime uint256 the public phase end time
      * @param newClaimsStartTime uint256 the claims phase start time
      * @param newClaimsEndTime uint256 the claims phase end time
      */
     function setPhaseTimes(
         uint256 newDaStartTime,
         uint256 newMintlistStartTime,
+        uint256 newPublicStartTime,
+        uint256 newPublicEndTime,
         uint256 newClaimsStartTime,
         uint256 newClaimsEndTime
     ) external onlyOwner {
@@ -715,6 +719,8 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
 
         daStartTime = newDaStartTime;
         mintlistStartTime = newMintlistStartTime;
+        publicStartTime = newPublicStartTime;
+        publicEndTime = newPublicEndTime;
         claimsStartTime = newClaimsStartTime;
         claimsEndTime = newClaimsEndTime;
 
