@@ -16,14 +16,14 @@ async function main() {
   [deployer] = await ethers.getSigners();
   console.log('- deployer address', deployer.address);
 
-  const treasury = deployer;
+  const treasury = getAddress('0xb47D2de67F68F17Ca9eE2D84394880B652B96Abb');
   const deployerBal = await deployer.getBalance();
   console.log('- deployer balance', formatEther(deployerBal));
 
   // atlanteans
   const atlanteansFactory = await ethers.getContractFactory('Atlanteans');
   const atlanteans = <Atlanteans>await upgrades.deployProxy(atlanteansFactory, [
-    treasury.address, // treasury
+    treasury, // treasury
     'defaultBaseURI/', // baseURI
   ]);
   await atlanteans.deployed();
@@ -35,8 +35,9 @@ async function main() {
   );
   const saleInitArgs: AtlanteansSale.InitializerArgsStruct = {
     atlanteans: atlanteans.address, // atlanteans
-    treasury: treasury.address,
+    treasury: treasury,
     weth: getAddress('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'),
+    // ! might need to change
     server: getAddress('0x284677dB45770dEAf0c947538b5d02F8270c70BC'),
 
     // phases
