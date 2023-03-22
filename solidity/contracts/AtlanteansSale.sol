@@ -51,6 +51,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         uint256 maxDaSupply;
         uint256 maxForSale;
         uint256 maxForClaim;
+        uint256 maxTreasurySupply;
     }
 
     /// @notice The treasury address
@@ -163,6 +164,12 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
     /// @notice Tracks the total count of NFTs that can be claimed
     /// @dev While we will have a merkle root set for this group, putting a hard cap helps limit the damage of any problems with an overly-generous merkle tree
     uint256 public maxForClaim;
+
+    /// @notice The total number of tokens reserved for AW treasury
+    uint256 public maxTreasurySupply;
+
+    /// @notice Tracks the total count of NFTs minted to treasury
+    uint256 public numTreasuryMinted;
 
     /**
      * @notice Validates if given address is not empty
@@ -352,6 +359,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         maxDaSupply = _initializerArgs.maxDaSupply;
         maxForSale = _initializerArgs.maxForSale;
         maxForClaim = _initializerArgs.maxForClaim;
+        maxTreasurySupply = _initializerArgs.maxTreasurySupply;
 
         selfRefundsStartTime = type(uint256).max;
     }
@@ -492,6 +500,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function teamSummon(address recipient, uint256 numAtlanteans) external onlyOwner {
         require(address(recipient) != address(0), 'AtlanteansSale: Address req');
+
         _mint(recipient, numAtlanteans);
         emit TeamSummon(recipient, numAtlanteans);
     }
@@ -644,7 +653,8 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function daRemainingSupply() public view returns (uint256) {
         if (daStarted()) {
-            return maxForSale + mintlistRemainingSupply() - numSold;
+            // ! it can't be maxForSale -- it created a bug
+            return maxDaSupply + mintlistRemainingSupply() - numSold;
         }
 
         return maxDaSupply - numSold;
