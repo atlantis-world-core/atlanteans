@@ -52,6 +52,9 @@ contract Atlanteans is
     /// @notice The URI for the token metadata
     string public baseURI;
 
+    /// @notice Handles logic to return relevant URI, if false return mystery
+    bool public reveal;
+
     mapping(address => bool) public allowedMarketplaces;
 
     event CharactersRevealed(string indexed uri);
@@ -115,8 +118,11 @@ contract Atlanteans is
      * @param uri string The baseURI from IPFS that have all character metadata.
      */
     function revealCharacters(string calldata uri) external onlyAdmin {
+        require(!reveal, 'Atlanteans: Characters have already been revealed.');
+
         emit CharactersRevealed(uri);
         baseURI = uri;
+        reveal = true;
     }
 
     /**
@@ -186,6 +192,10 @@ contract Atlanteans is
      * @dev Returns the Uniform Resource Identifier (URI) for `tokenId` token.
      */
     function tokenURI(uint256 tokenId) public view virtual override(ERC721AUpgradeable, IERC721AUpgradeable) returns (string memory) {
+        if (!reveal) {
+            return _baseURI();
+        }
+
         return string(abi.encodePacked(super.tokenURI(tokenId), '.json'));
     }
 
