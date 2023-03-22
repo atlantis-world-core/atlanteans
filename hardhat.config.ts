@@ -27,6 +27,10 @@ const networks: NetworksUserConfig =
           url: 'http://127.0.0.1:8545',
           accounts: env.getAccounts('localhost'),
         },
+        goerli: {
+          url: env.getNodeUrl('goerli'),
+          accounts: env.getAccounts('ethereum'),
+        },
         kovan: {
           url: env.getNodeUrl('kovan'),
           accounts: env.getAccounts('ethereum'),
