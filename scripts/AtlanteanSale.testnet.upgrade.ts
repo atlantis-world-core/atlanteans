@@ -21,6 +21,11 @@ async function main() {
     'AtlanteansSale'
   );
 
+  await upgrades.forceImport(
+    '0x6cD551658B37B9131FE5758FcC03C884954F23b7',
+    atlanteansSaleFactory
+  );
+
   const atlanteansSale = <AtlanteansSale>(
     await upgrades.upgradeProxy(
       '0x6cD551658B37B9131FE5758FcC03C884954F23b7',
