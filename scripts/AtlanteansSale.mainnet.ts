@@ -23,7 +23,7 @@ async function main() {
   const atlanteansFactory = await ethers.getContractFactory('Atlanteans');
   const atlanteans = <Atlanteans>await upgrades.deployProxy(atlanteansFactory, [
     treasury, // treasury
-    'ipfs://bafkreigwgfd77eimmalu57ckulmjwhvjzn65zt2iwwy4artfnvq5rlr7j4', // baseURI
+    'ipfs://bafkreiacv2z64p3hr4lbf3ft7e443x32xnthh3uxvjisv2itrbdu7svssm', // baseURI
   ]);
   await atlanteans.deployed();
   console.log('- Atlanteans erc721a deployed:', atlanteans.address);
@@ -36,7 +36,6 @@ async function main() {
     atlanteans: atlanteans.address, // atlanteans
     treasury: treasury,
     weth: getAddress('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'),
-    // ! might need to change
     server: getAddress('0xFbECe3757dA012A12037aE6243DD5328b8EE1fFF'),
 
     // phases
