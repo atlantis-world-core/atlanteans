@@ -10,13 +10,11 @@ async function main() {
 
   let deployer: SignerWithAddress;
 
-
   [deployer] = await ethers.getSigners();
   console.log('- deployer address', deployer.address);
 
-   const deployerBal = await deployer.getBalance();
+  const deployerBal = await deployer.getBalance();
   console.log('- deployer balance', formatEther(deployerBal));
-
 
   // sale
   const atlanteansSaleFactory = await ethers.getContractFactory(
@@ -24,7 +22,10 @@ async function main() {
   );
 
   const atlanteansSale = <AtlanteansSale>(
-    await upgrades.upgradeProxy("0x6cD551658B37B9131FE5758FcC03C884954F23b7",atlanteansSaleFactory)
+    await upgrades.upgradeProxy(
+      '0x6cD551658B37B9131FE5758FcC03C884954F23b7',
+      atlanteansSaleFactory
+    )
   );
   await atlanteansSale.deployed();
   console.log('- AtlanteansSale upgraded:', atlanteansSale.address);
