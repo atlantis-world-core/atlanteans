@@ -1936,5 +1936,53 @@ describe('Spec: AtlanteansSale', () => {
         MerkleTreeUtil.createMerkleRoot(mintlistMerkleTree);
       console.log('mintlistMerkleRoot', mintlistMerkleRoot);
     });
+
+    it('should test timestampts', async () => {
+      const timestamps = {
+        mintlistStartTime: BigNumber.from('1679504400'),
+        daStartTime: BigNumber.from('1679590800'),
+        publicStartTime: BigNumber.from('1679677200'),
+        publicEndTime: BigNumber.from('1679763600'),
+        claimsStartTime: BigNumber.from('1679677200'),
+        claimsEndTime: BigNumber.from('1687626000'),
+      };
+
+      console.log(
+        'mintlist start time:',
+        new Date(
+          Math.abs(timestamps.mintlistStartTime.toNumber() * 1000)
+        ).toUTCString()
+      );
+      console.log(
+        'da start time:',
+        new Date(
+          Math.abs(timestamps.daStartTime.toNumber() * 1000)
+        ).toUTCString()
+      );
+      console.log(
+        'public start time:',
+        new Date(
+          Math.abs(timestamps.publicStartTime.toNumber() * 1000)
+        ).toUTCString()
+      );
+      console.log(
+        'public end time:',
+        new Date(
+          Math.abs(timestamps.publicEndTime.toNumber() * 1000)
+        ).toUTCString()
+      );
+      console.log(
+        'claims start time:',
+        new Date(
+          Math.abs(timestamps.claimsStartTime.toNumber() * 1000)
+        ).toUTCString()
+      );
+      console.log(
+        'claims end time:',
+        new Date(
+          Math.abs(timestamps.claimsEndTime.toNumber() * 1000)
+        ).toUTCString()
+      );
+    });
   });
 });

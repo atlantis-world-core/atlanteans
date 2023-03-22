@@ -4,14 +4,7 @@ import { formatEther, getAddress, parseEther } from 'ethers/lib/utils';
 import { ethers, upgrades } from 'hardhat';
 import { Atlanteans, AtlanteansSale, ERC20Mock } from '../typechained';
 import { MerkleTreeUtil } from '../utils/merkle';
-import {
-  BLOCK_ONE_DAY,
-  BLOCK_ONE_HOUR,
-  BLOCK_ONE_MINUTE,
-  BLOCK_ONE_MONTH,
-  TimeFormat,
-  TimeUtil,
-} from '../utils/time';
+import { BLOCK_ONE_MINUTE, TimeFormat, TimeUtil } from '../utils/time';
 
 async function main() {
   console.log('✨ init testnet deploy script...');
