@@ -572,6 +572,27 @@ describe('Spec: AtlanteansSale', () => {
       expect('2540').to.be.eq(daRemainingSupply);
     });
 
+    it.only('should bla bla', async () => {
+      await evmIncreaseTime(BLOCK_ONE_DAY * 2);
+
+      await mockAtlanteansSale.setVariable(
+        'maxMintlistSupply',
+        BigNumber.from(1999)
+      );
+      await mockAtlanteansSale.setVariable('maxDaSupply', BigNumber.from(2540));
+      await mockAtlanteansSale.setVariable(
+        'numMintlistSold',
+        BigNumber.from(1999)
+      );
+      await mockAtlanteansSale.setVariable('numSold', BigNumber.from(1999));
+
+      const daStarted = await mockAtlanteansSale.daStarted();
+      console.log('daStarted', daStarted);
+
+      const daRemainingSupply = await mockAtlanteansSale.daRemainingSupply();
+      console.log('daRemainingSupply', daRemainingSupply.toNumber());
+    });
+
     it('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
       await evmIncreaseTime(BLOCK_ONE_DAY * 2);
 

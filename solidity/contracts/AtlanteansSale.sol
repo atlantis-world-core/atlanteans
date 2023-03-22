@@ -644,7 +644,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function daRemainingSupply() public view returns (uint256) {
         if (daStarted()) {
-            return maxDaSupply + mintlistRemainingSupply() - numSold;
+            return maxForSale + mintlistRemainingSupply() - numSold;
         }
 
         return maxDaSupply - numSold;
