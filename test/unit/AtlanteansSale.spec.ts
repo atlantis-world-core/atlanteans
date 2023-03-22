@@ -594,7 +594,7 @@ describe('Spec: AtlanteansSale', () => {
       console.log('daRemainingSupply', daRemainingSupply.toNumber());
     });
 
-    it.only('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
+    it('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
       await evmIncreaseTime(BLOCK_ONE_DAY * 2);
 
       const daStarted = await atlanteansSale.daStarted();
@@ -716,30 +716,20 @@ describe('Spec: AtlanteansSale', () => {
       ).to.be.greaterThanOrEqual(amount);
     });
 
-    it('should refund excess $ETH sent back to caller', async () => {
+    it('should revert when given incorrect $ETH', async () => {
       numAtlanteans = '1';
 
-      let userBalance = await user.getBalance();
-
-      tx = await atlanteansSale
-        .connect(user)
-        ['bidSummon(uint256)'](numAtlanteans, {
+      await expect(
+        atlanteansSale.connect(user)['bidSummon(uint256)'](numAtlanteans, {
           value: parseEther(formatEther(currentDaPrice)).mul(3),
-        });
-      rc = await tx.wait();
-      const fee = calculateTxFee(rc);
+        })
+      ).to.be.revertedWith('AtlanteansSale: Ether value incorrect');
 
       const treasuryBalance = await getTreasuryBalance(atlanteansSale);
 
-      expect(await atlanteans.balanceOf(user.address)).to.be.eq('1');
-      expect(await user.getBalance()).to.be.eq(
-        userBalance.sub(currentDaPrice).sub(fee)
-      );
-      expect(await user.getBalance()).to.be.not.eq(
-        userBalance.sub(parseEther(formatEther(currentDaPrice)).mul(3)).sub(fee)
-      );
+      expect(await atlanteans.balanceOf(user.address)).to.be.eq('0');
       expect(treasuryBalance).to.be.greaterThanOrEqual(
-        parseEther(formatEther(currentDaPrice)).mul(numAtlanteans)
+        parseEther('0').mul(numAtlanteans)
       );
     });
 
@@ -750,9 +740,7 @@ describe('Spec: AtlanteansSale', () => {
         atlanteansSale.connect(user)['bidSummon(uint256)'](numAtlanteans, {
           value: parseEther(formatEther(currentDaPrice)),
         })
-      ).to.be.revertedWith(
-        'AtlanteansSale: Ether value sent is not sufficient'
-      );
+      ).to.be.revertedWith('AtlanteansSale: Ether value incorrect');
 
       expect(await atlanteans.balanceOf(user.address)).to.be.eq('0');
       expect(
