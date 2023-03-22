@@ -594,7 +594,7 @@ describe('Spec: AtlanteansSale', () => {
       console.log('daRemainingSupply', daRemainingSupply.toNumber());
     });
 
-    it.only('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
+    it('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
       await evmIncreaseTime(BLOCK_ONE_DAY * 2);
 
       const daStarted = await atlanteansSale.daStarted();
@@ -1375,10 +1375,50 @@ describe('Spec: AtlanteansSale', () => {
     });
   });
 
-  describe('> teamSummon', () => {
+  describe.only('> teamSummon', () => {
+    it('should not mint more than the treasury supply', async () => {
+      let maxTreasurySupply = await mockAtlanteansSale.maxTreasurySupply();
+      await mockAtlanteansSale.setVariable(
+        'numTreasuryMinted',
+        maxTreasurySupply.sub(1)
+      );
+      let numTreasuryMinted = await mockAtlanteansSale.numTreasuryMinted();
+
+      await expect(
+        mockAtlanteansSale.teamSummon(user.address, '2')
+      ).to.be.revertedWith(
+        'AtlanteansSale: No remaining for treasury allocation'
+      );
+
+      await mockAtlanteansSale.setVariable('numTreasuryMinted', '0');
+      numTreasuryMinted = await mockAtlanteansSale.numTreasuryMinted();
+
+      await expect(
+        mockAtlanteansSale.teamSummon(user.address, maxTreasurySupply)
+      ).to.be.not.reverted;
+      await expect(
+        mockAtlanteansSale.teamSummon(user.address, '1')
+      ).to.be.revertedWith(
+        'AtlanteansSale: No remaining for treasury allocation'
+      );
+    });
+
+    it('should revert when attempting to mint more than the treasury allocation', async () => {
+      // setup
+      numAtlanteans = '470';
+
+      // action & assert
+      await expect(
+        atlanteansSale.connect(admin).teamSummon(user.address, numAtlanteans)
+      ).to.be.revertedWith(
+        'AtlanteansSale: No remaining for treasury allocation'
+      );
+      expect(await atlanteans.balanceOf(user.address)).to.be.eq('0');
+    });
+
     it('should mint 32', async () => {
       // setup
-      numAtlanteans = '5000';
+      numAtlanteans = '32';
 
       // action & assert
       await expect(
