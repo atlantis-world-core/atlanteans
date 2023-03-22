@@ -81,14 +81,15 @@ async function main() {
     // finalPrice: parseEther('2.5'),
     mintlistPrice: parseEther('0.05'),
 
-    maxMintlistSupply: BigNumber.from(2),
-    // maxMintlistSupply: BigNumber.from(1999),
-    maxDaSupply: BigNumber.from(30),
-    // maxDaSupply: BigNumber.from(2540),
-    maxForSale: BigNumber.from(32),
-    // maxForSale: BigNumber.from(4539),
-    maxForClaim: BigNumber.from(2),
-    // maxForClaim: BigNumber.from(1781),
+    // maxMintlistSupply: BigNumber.from(2),
+    maxMintlistSupply: BigNumber.from(1999),
+    // maxDaSupply: BigNumber.from(30),
+    maxDaSupply: BigNumber.from(2540),
+    // maxForSale: BigNumber.from(32),
+    maxForSale: BigNumber.from(4539),
+    // maxForClaim: BigNumber.from(2),
+    maxForClaim: BigNumber.from(1781),
+    maxTreasurySupply: BigNumber.from(469),
   };
   const atlanteansSale = <AtlanteansSale>(
     await upgrades.deployProxy(atlanteansSaleFactory, [saleInitArgs])
