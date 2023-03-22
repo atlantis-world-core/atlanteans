@@ -211,7 +211,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
     modifier daValidations(uint256 numAtlanteans) {
         require(msg.sender == tx.origin && !AddressUpgradeable.isContract(msg.sender), 'AtlanteansSale: Not EOA');
         require(numSold < maxDaSupply + mintlistRemainingSupply(), 'AtlanteansSale: Auction sold out');
-        require(numAtlanteans <= daRemainingSupply(), 'AtlanteansSale: Not enough remaining');
+        require(numAtlanteans <= remainingForSale(), 'AtlanteansSale: Not enough remaining');
         require(daStarted(), 'AtlanteansSale: Auction not started');
         require(!claimsStarted(), 'AtlanteansSale: Auction phase over');
         require(
@@ -651,13 +651,8 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
     /**
      * @notice returns the auction remaining supply
      */
-    function daRemainingSupply() public view returns (uint256) {
-        if (daStarted()) {
-            // ! it can't be maxForSale -- it created a bug
-            return maxDaSupply + mintlistRemainingSupply() - numSold;
-        }
-
-        return maxDaSupply - numSold;
+    function remainingForSale() public view returns (uint256) {
+        return maxForSale - numSold;
     }
 
     /*
