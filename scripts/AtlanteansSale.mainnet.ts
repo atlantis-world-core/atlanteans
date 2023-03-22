@@ -4,7 +4,6 @@ import { formatEther, getAddress, parseEther } from 'ethers/lib/utils';
 import { Atlanteans, AtlanteansSale } from '../typechained';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { ethers, upgrades } from 'hardhat';
-import { MerkleTreeUtil } from '../utils/merkle';
 
 async function main() {
   console.log('✨ init Mainnet deploy script...');
@@ -38,7 +37,7 @@ async function main() {
     treasury: treasury,
     weth: getAddress('0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'),
     // ! might need to change
-    server: getAddress('0x284677dB45770dEAf0c947538b5d02F8270c70BC'),
+    server: getAddress('0xFbECe3757dA012A12037aE6243DD5328b8EE1fFF'),
 
     // phases
     mintlistStartTime: BigNumber.from('1679504400'),
@@ -72,23 +71,6 @@ async function main() {
 
   tx = await atlanteans.addMinter(atlanteansSale.address);
   rc = await tx.wait();
-
-  /**
-   * merkle trees
-   */
-
-  // mintlist
-  const mintlistMerkleTree = MerkleTreeUtil.createMerkleTree(
-    MerkleTreeUtil.sanitizeLeaves([
-      // TODO: Get final mintlist leaves
-    ])
-  );
-  const mintlistMerkleRoot =
-    MerkleTreeUtil.createMerkleRoot(mintlistMerkleTree);
-
-  tx = await atlanteansSale.setMintlist1MerkleRoot(mintlistMerkleRoot);
-  rc = await tx.wait();
-  console.log('- mintlistMerkleRoot', mintlistMerkleRoot);
 }
 
 main()
