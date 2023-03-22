@@ -54,10 +54,9 @@ async function main() {
     mintlistStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 5), // _mintlistStartTime
     daStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 15), // _daStartTime
     publicStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 50),
-    publicEndTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 60),
+    publicEndTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 80),
     claimsStartTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 50),
-    claimsEndTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 60),
-    // selfRefundsStartTime: claimsStartTime,
+    claimsEndTime: TimeFormat.fromBigNumber(now + BLOCK_ONE_MINUTE * 80),
 
     // auction
     startPrice: parseEther('0.1420'),
@@ -65,13 +64,8 @@ async function main() {
     dropPerStep: parseEther('0.0031'),
     daPriceCurveLength: BigNumber.from(
       TimeFormat.fromBigNumber(BLOCK_ONE_MINUTE * 24) // 24 minutes
-      // TimeFormat.fromBigNumber(BLOCK_ONE_DAY) // 24 hrs
     ),
-    daDropInterval: BigNumber.from(
-      TimeFormat.fromBigNumber(BLOCK_ONE_MINUTE)
-      // TimeFormat.fromBigNumber(BLOCK_ONE_HOUR * 1)
-    ),
-    // finalPrice: parseEther('2.5'),
+    daDropInterval: BigNumber.from(TimeFormat.fromBigNumber(BLOCK_ONE_MINUTE)),
     mintlistPrice: parseEther('0.05'),
 
     // maxMintlistSupply: BigNumber.from(2),
