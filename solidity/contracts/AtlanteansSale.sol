@@ -500,6 +500,9 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function teamSummon(address recipient, uint256 numAtlanteans) external onlyOwner {
         require(address(recipient) != address(0), 'AtlanteansSale: Address req');
+        require(numTreasuryMinted + numAtlanteans <= maxTreasurySupply, 'AtlanteansSale: No remaining for treasury allocation');
+
+        numTreasuryMinted += numAtlanteans;
 
         _mint(recipient, numAtlanteans);
         emit TeamSummon(recipient, numAtlanteans);
