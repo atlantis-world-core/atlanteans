@@ -104,7 +104,7 @@ describe('Spec: AtlanteansSale', () => {
     rc.gasUsed.mul(rc.effectiveGasPrice);
 
   beforeEach(async () => {
-    now = await TimeUtil.now(ethers.provider);
+    const now = await TimeUtil.now(ethers.provider);
 
     [
       admin,
@@ -195,6 +195,7 @@ describe('Spec: AtlanteansSale', () => {
       maxDaSupply: BigNumber.from(2540),
       maxForSale: BigNumber.from(1999).add(BigNumber.from(2540)),
       maxForClaim: BigNumber.from(1442),
+      maxTreasurySupply: BigNumber.from(469),
     };
     atlanteansSale = <AtlanteansSale>(
       await upgrades.deployProxy(factory, [saleInitArgs])
@@ -572,7 +573,7 @@ describe('Spec: AtlanteansSale', () => {
       expect('2540').to.be.eq(daRemainingSupply);
     });
 
-    it.only('should bla bla', async () => {
+    it('should bla bla', async () => {
       await evmIncreaseTime(BLOCK_ONE_DAY * 2);
 
       await mockAtlanteansSale.setVariable(
@@ -593,8 +594,12 @@ describe('Spec: AtlanteansSale', () => {
       console.log('daRemainingSupply', daRemainingSupply.toNumber());
     });
 
-    it('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
+    it.only('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
       await evmIncreaseTime(BLOCK_ONE_DAY * 2);
+
+      const daStarted = await atlanteansSale.daStarted();
+      console.log('daStarted', daStarted);
+      console.log(6538 - 4539);
 
       const daRemainingSupply = await atlanteansSale.daRemainingSupply();
       console.log('daRemainingSupply', daRemainingSupply);
@@ -1866,6 +1871,41 @@ describe('Spec: AtlanteansSale', () => {
   });
 
   describe('> playground', () => {
+    it('should sum total supply', async () => {
+      const supply = {
+        maxMintlistSupply: BigNumber.from(1999),
+        maxDaSupply: BigNumber.from(2540),
+        maxForSale: BigNumber.from(4539),
+        maxForClaim: BigNumber.from(1442),
+        maxTreasurySupply: BigNumber.from(469),
+      };
+      const sum = supply.maxForSale
+        .add(supply.maxForClaim)
+        .add(supply.maxTreasurySupply);
+      console.log('sum', sum);
+
+      expect(supply.maxForSale).to.be.eq(
+        supply.maxDaSupply.add(supply.maxMintlistSupply)
+      );
+      expect(sum).to.be.eq(BigNumber.from(6450));
+    });
+
+    it('timestamp', async () => {
+      const now = await TimeUtil.now(ethers.provider);
+      console.log(now);
+      console.log(new Date(now));
+      console.log(Math.abs(now / 1000));
+      console.log(Math.abs(now / 1000) * 1000);
+      console.log(new Date(Math.abs(now / 1000) * 1000));
+
+      console.log('march 23rd gmt', 1679504400);
+      console.log('march 23rd gmt', new Date(1679504400));
+
+      const daStartTime = await mockAtlanteansSale.daStartTime();
+      console.log(daStartTime.toNumber());
+      console.log(new Date(daStartTime.toNumber()));
+    });
+
     it('should calculate remaining for sale', async () => {
       let [numSold, maxForSale] = await Promise.all([
         mockAtlanteansSale.numSold(),
