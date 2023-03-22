@@ -565,46 +565,51 @@ describe('Spec: AtlanteansSale', () => {
     });
   });
 
-  describe('> daRemainingSupply', () => {
+  describe('> remainingForSale', () => {
     it('should get the remaining auction supply before auction started', async () => {
-      const daRemainingSupply = await atlanteansSale.daRemainingSupply();
-      console.log('daRemainingSupply', daRemainingSupply);
+      // sold from mintlist
+      await mockAtlanteansSale.setVariable('numSold', BigNumber.from(1999));
 
-      expect('2540').to.be.eq(daRemainingSupply);
+      const remainingForSale = await mockAtlanteansSale.remainingForSale();
+      console.log('remainingForSale', remainingForSale);
+
+      expect('2540').to.be.eq(remainingForSale);
     });
 
     it('should bla bla', async () => {
       await evmIncreaseTime(BLOCK_ONE_DAY * 2);
+      const maxMintlistSupply = BigNumber.from(1999);
+      const maxDaSupply = BigNumber.from(2540);
 
       await mockAtlanteansSale.setVariable(
         'maxMintlistSupply',
-        BigNumber.from(1999)
+        maxMintlistSupply
       );
-      await mockAtlanteansSale.setVariable('maxDaSupply', BigNumber.from(2540));
+      await mockAtlanteansSale.setVariable('maxDaSupply', maxDaSupply);
       await mockAtlanteansSale.setVariable(
         'numMintlistSold',
-        BigNumber.from(1999)
+        maxMintlistSupply
       );
-      await mockAtlanteansSale.setVariable('numSold', BigNumber.from(1999));
+      await mockAtlanteansSale.setVariable('numSold', maxMintlistSupply);
 
       const daStarted = await mockAtlanteansSale.daStarted();
-      console.log('daStarted', daStarted);
+      console.log('bla bla: daStarted', daStarted);
 
-      const daRemainingSupply = await mockAtlanteansSale.daRemainingSupply();
-      console.log('daRemainingSupply', daRemainingSupply.toNumber());
+      const remainingForSale = await mockAtlanteansSale.remainingForSale();
+      console.log('bla bla: remainingForSale', remainingForSale.toNumber());
     });
 
-    it.only('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
+    it('should get the remaining auction supply after auction started with remaining supply from mintlist', async () => {
       await evmIncreaseTime(BLOCK_ONE_DAY * 2);
 
       const daStarted = await atlanteansSale.daStarted();
       console.log('daStarted', daStarted);
       console.log(6538 - 4539);
 
-      const daRemainingSupply = await atlanteansSale.daRemainingSupply();
-      console.log('daRemainingSupply', daRemainingSupply);
+      const remainingForSale = await atlanteansSale.remainingForSale();
+      console.log('remainingForSale', remainingForSale);
 
-      expect('4539').to.be.eq(daRemainingSupply);
+      expect('4539').to.be.eq(remainingForSale);
     });
 
     it('should get mock', async () => {
@@ -614,15 +619,15 @@ describe('Spec: AtlanteansSale', () => {
 
       await mockAtlanteansSale.setVariable('numSold', '4538');
 
-      const [daRemainingSupply, numSold] = await Promise.all([
-        mockAtlanteansSale.daRemainingSupply(),
+      const [remainingForSale, numSold] = await Promise.all([
+        mockAtlanteansSale.remainingForSale(),
         mockAtlanteansSale.numSold(),
       ]);
 
-      console.log('daRemainingSupply', daRemainingSupply);
+      console.log('remainingForSale', remainingForSale);
       console.log(
-        'numAtlanteans.lt(daRemainingSupply)',
-        numAtlanteans.lte(daRemainingSupply)
+        'numAtlanteans.lt(remainingForSale)',
+        numAtlanteans.lte(remainingForSale)
       );
     });
   });
