@@ -385,7 +385,6 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         whenNotPaused
         mintlistValidations(_merkleProof, numAtlanteans, msg.value)
     {
-        _sendPaymentAndRefund(mintlistPrice * numAtlanteans);
         _mintlistMint(numAtlanteans);
     }
 
@@ -399,7 +398,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         uint256 numAtlanteans,
         uint256 amount
     ) external payable nonReentrant whenNotPaused mintlistValidations(_merkleProof, numAtlanteans, amount) {
-        _sendWethPaymentAndRefund(mintlistPrice * numAtlanteans, amount);
+        _sendWethPayment(mintlistPrice * numAtlanteans);
         _mintlistMint(numAtlanteans);
     }
 
@@ -409,10 +408,8 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function bidSummon(uint256 numAtlanteans) external payable nonReentrant whenNotPaused daValidations(numAtlanteans) {
         uint256 bidPrice = _bidPrice(numAtlanteans);
+        require(msg.value == bidPrice, 'AtlanteansSale: Ether value incorrect');
 
-        require(msg.value >= bidPrice, 'AtlanteansSale: Ether value sent is not sufficient');
-
-        _sendPaymentAndRefund(bidPrice);
         _daMint(numAtlanteans);
     }
 
@@ -423,10 +420,9 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function bidSummon(uint256 numAtlanteans, uint256 amount) external payable nonReentrant whenNotPaused daValidations(numAtlanteans) {
         uint256 bidPrice = _bidPrice(numAtlanteans);
+        require(amount == bidPrice, 'AtlanteansSale: Ether value incorrect');
 
-        require(amount >= bidPrice, 'AtlanteansSale: Ether value sent is not sufficient');
-
-        _sendWethPaymentAndRefund(bidPrice, amount);
+        _sendWethPayment(bidPrice);
         _daMint(numAtlanteans);
     }
 
@@ -435,7 +431,6 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param numAtlanteans uint256 of the number of atlanteans you're trying to mint
      */
     function publicSummon(uint256 numAtlanteans) external payable nonReentrant whenNotPaused publicValidations(numAtlanteans, msg.value) {
-        _sendPaymentAndRefund(lastPrice * numAtlanteans);
         _publicMint(numAtlanteans);
     }
 
@@ -451,7 +446,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
         whenNotPaused
         publicValidations(numAtlanteans, amount)
     {
-        _sendWethPaymentAndRefund(lastPrice * numAtlanteans, amount);
+        _sendWethPayment(lastPrice * numAtlanteans);
         _publicMint(numAtlanteans);
     }
 
@@ -528,12 +523,13 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param numAtlanteans uint256 The quantity of tokens to be minted
      */
     function _daMint(uint256 numAtlanteans) private {
-        _mint(msg.sender, numAtlanteans);
         daMinters.push(msg.sender);
         daAmountPaid[msg.sender] += msg.value;
         daNumMinted[msg.sender] += numAtlanteans;
         numSold += numAtlanteans;
         lastPrice = currentDaPrice();
+
+        _mint(msg.sender, numAtlanteans);
         emit BidSummon(msg.sender, numAtlanteans);
     }
 
@@ -543,6 +539,7 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     function _publicMint(uint256 numAtlanteans) private {
         numSold += numAtlanteans;
+
         _mint(msg.sender, numAtlanteans);
         emit PublicSummon(msg.sender, numAtlanteans);
     }
@@ -782,32 +779,9 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @notice Sends payment to treasury and returns excess amount back to caller.
      * @param price The current auction price or final price.
      */
-    function _sendPaymentAndRefund(uint256 price) private {
-        uint256 refund = msg.value - price;
-        // @slither-disable-next-line reentrancy-eth,reentrancy-benign
-        (bool paymentSent, bytes memory paymentData) = payable(address(this)).call{value: price}('');
-        require(paymentSent, 'AtlanteansSale: Failed to send Ether to treasury.');
-
-        if (refund > 0) {
-            // @slither-disable-next-line reentrancy-eth,reentrancy-benign
-            (bool refundSent, bytes memory refundData) = payable(msg.sender).call{value: refund}('');
-            require(refundSent, 'AtlanteansSale: Failed to send refund back to caller.');
-        }
-    }
-
-    /**
-     * @notice Sends payment to treasury and returns excess amount back to caller.
-     * @param price The current auction price or final price.
-     */
-    function _sendWethPaymentAndRefund(uint256 price, uint256 amount) private {
-        uint256 refund = amount - price;
+    function _sendWethPayment(uint256 price) private {
         // slither-disable-next-line unchecked-transfer,reentrancy-events
         IWETH(weth).transferFrom(msg.sender, address(this), price);
-
-        if (refund > 0) {
-            // slither-disable-next-line unchecked-transfer,reentrancy-events
-            IWETH(weth).transferFrom(address(this), msg.sender, price);
-        }
     }
 
     /*
