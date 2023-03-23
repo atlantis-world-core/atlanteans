@@ -320,6 +320,11 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
     event SetServer(address indexed oldServer, address indexed newServer);
 
+    /**
+     * @notice Emits event when refund is issued to mintlist minter
+     */
+    event MintlistRefund(address indexed account, uint256 indexed refundAmount);
+
     fallback() external payable {}
 
     receive() external payable {}
@@ -378,10 +383,13 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @notice Mint an Atlantean in the mintlist phase (paid)
      * @param _merkleProof bytes32[] your proof of being able to mint
      */
-    function mintlistSummon(
-        bytes32[] calldata _merkleProof,
-        uint256 numAtlanteans
-    ) external payable nonReentrant whenNotPaused mintlistValidations(_merkleProof, numAtlanteans, msg.value) {
+    function mintlistSummon(bytes32[] calldata _merkleProof, uint256 numAtlanteans)
+        external
+        payable
+        nonReentrant
+        whenNotPaused
+        mintlistValidations(_merkleProof, numAtlanteans, msg.value)
+    {
         _mintlistMint(numAtlanteans);
     }
 
@@ -436,10 +444,13 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param numAtlanteans uint256 of the number of atlanteans you're trying to mint
      * @param amount uint256 of the wrapped ether amount sent by caller
      */
-    function publicSummon(
-        uint256 numAtlanteans,
-        uint256 amount
-    ) external payable nonReentrant whenNotPaused publicValidations(numAtlanteans, amount) {
+    function publicSummon(uint256 numAtlanteans, uint256 amount)
+        external
+        payable
+        nonReentrant
+        whenNotPaused
+        publicValidations(numAtlanteans, amount)
+    {
         _sendWethPayment(lastPrice * numAtlanteans);
         _publicMint(numAtlanteans);
     }
@@ -450,7 +461,11 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      * @param scrollsAmount uint256 can be fetched from server side
      * @param numAtlanteans uint256 the amount to be minted during claiming
      */
-    function claimSummon(bytes calldata signature, uint256 scrollsAmount, uint256 numAtlanteans) external nonReentrant whenNotPaused {
+    function claimSummon(
+        bytes calldata signature,
+        uint256 scrollsAmount,
+        uint256 numAtlanteans
+    ) external nonReentrant whenNotPaused {
         require(claimsStarted(), 'AtlanteansSale: Claim phase not started');
         require(numClaimed < maxForClaim, 'AtlanteansSale: No more claims');
 
@@ -780,6 +795,17 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
      */
 
     /**
+     * @notice issue mintlist refund to a specific account
+     * @param account address the account to be refunded
+     * @param refundAmount uint256 the ETH amount to be refunded
+     */
+    function mintlistRefund(address account, uint256 refundAmount) public onlyOwner returns (bool) {
+        (bool success, ) = payable(account).call{value: refundAmount, gas: 30_000}(new bytes(0));
+        emit MintlistRefund(account, refundAmount);
+        return success;
+    }
+
+    /**
      * @notice issues refunds for the accounts in minters between startIdx and endIdx inclusive
      * @param startIdx uint256 the starting index of daMinters
      * @param endIdx uint256 the ending index of daMinters, inclusive
@@ -853,7 +879,11 @@ contract AtlanteansSale is OwnableUpgradeable, PausableUpgradeable, ReentrancyGu
     }
 
     /// @notice To change DA lowest price
-    function daConfig(uint256 _startPrice, uint256 _lowestAmount, uint256 size) external onlyOwner {
+    function daConfig(
+        uint256 _startPrice,
+        uint256 _lowestAmount,
+        uint256 size
+    ) external onlyOwner {
         startPrice = _startPrice;
         lowestPrice = _lowestAmount;
         dropPerStep = size;
