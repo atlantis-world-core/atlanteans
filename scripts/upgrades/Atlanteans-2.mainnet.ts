@@ -4,12 +4,14 @@ import { ethers, upgrades } from 'hardhat';
 async function main() {
   console.log('✨ init Mainnet upgrade script...');
 
-  const Atlanteans = await ethers.getContractFactory('Atlanteans');
-  const upgradedAtlanteans = await upgrades.upgradeProxy(
-    getAddress('0x47691834cbb96ce5fbcd1c82f3804fba63460370'),
-    Atlanteans
+  const AtlanteansSale = await ethers.getContractFactory('AtlanteansSale');
+
+  await upgrades.upgradeProxy(
+    // https://etherscan.io/address/0x3c800c367E75ce460287CEE10DB0B2C6e7C894f3
+    getAddress('0x3c800c367e75ce460287cee10db0b2c6e7c894f3'),
+    AtlanteansSale
   );
-  console.log('Atlanteans upgraded');
+  console.log('AtlanteansSale upgraded');
 
   // mintlistRefund added
 }
