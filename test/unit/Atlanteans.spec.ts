@@ -1,4 +1,4 @@
-import { ContractReceipt, ContractTransaction, Wallet } from 'ethers';
+import { Wallet } from 'ethers';
 import { Atlanteans, Atlanteans__factory } from '../../typechained';
 import { MockContract, smock } from '@defi-wonderland/smock';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
@@ -57,6 +57,30 @@ describe('Spec: Atlanteans', () => {
       expect(await mockAtlanteans.tokenURI('1')).to.be.eq(
         'ipfs://watosi/1.json'
       );
+    });
+  });
+
+  describe('> upgrade', () => {
+    it('should upgrade', async () => {
+      const AtlanteansV2 = await ethers.getContractFactory('Atlanteans');
+      let baseURI = await atlanteans.baseURI();
+      console.log('baseURI', baseURI);
+
+      const upgradedAtlanteans = await upgrades.upgradeProxy(
+        atlanteans.address,
+        AtlanteansV2
+      );
+
+      await expect(
+        upgradedAtlanteans
+          .connect(admin)
+          .setBaseURI(
+            'ipfs://bafkreiel7gfydby2tzzjuy2ypgucrza65vkv6efn3dj33cre46375svb3y'
+          )
+      ).to.be.not.reverted;
+
+      baseURI = await upgradedAtlanteans.baseURI();
+      console.log('baseURI', baseURI);
     });
   });
 });

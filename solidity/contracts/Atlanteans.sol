@@ -96,6 +96,13 @@ contract Atlanteans is
     }
 
     /**
+     * @dev Update baseURI without altering `reveal`
+     */
+    function setBaseURI(string calldata uri) external onlyAdmin {
+        baseURI = uri;
+    }
+
+    /**
      * @dev See {ERC2981Upgradeable-_setDefaultRoyalty}.
      */
     function setDefaultRoyalty(address receiver, uint96 feeNumerator) external onlyAdmin {
